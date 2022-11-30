@@ -1,5 +1,7 @@
 # CG-City
 
+Demo: https://ndshen.github.io/CG-City/
+
 ## Setup
 
 Download [Node.js](https://nodejs.org/en/download/).
@@ -14,4 +16,7 @@ npm run dev
 
 # Build for production in the dist/ directory
 npm run build
+
+# Deploy to gh-pages after build
+npm run deploy
 ```
