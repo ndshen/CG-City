@@ -13,57 +13,43 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+/**
+ * Axes Helper
+ */
+const axesHelper = new THREE.AxesHelper(2);
+scene.add(axesHelper);
+
 // Object
-const geometry = new THREE.PlaneGeometry(3, 3, 64, 64);
+const boxWidth = 1;
+const boxHeight = 1;
+const boxMinDepth = 1;
+const boxMaxDepth = 5;
 
-// Materails
-const material = new THREE.MeshStandardMaterial({
-  color: "green",
-  wireframe: true,
-});
+const boxNumX = 20;
+const boxNumY = 20;
 
-// Mesh
-const plane = new THREE.Mesh(geometry, material);
+const boxGroup = new THREE.Group();
+for (let i = 0; i < boxNumY; i++) {
+  for (let j = 0; j < boxNumX; j++) {
+    let boxDepth = Math.max(Math.random() * boxMaxDepth, boxMinDepth);
+    const box = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+    const material = new THREE.MeshBasicMaterial({
+      color: "green",
+      wireframe: true,
+    });
+    const mesh = new THREE.Mesh(box, material);
+    mesh.position.x = j * boxWidth + boxWidth / 2 - (boxNumX * boxWidth) / 2;
+    mesh.position.y = i * boxHeight + boxHeight / 2 - (boxNumY * boxHeight) / 2;
+    mesh.position.z = boxDepth / 2;
 
-scene.add(plane);
-gui.add(plane.rotation, "x").min(0).max(100);
+    boxGroup.add(mesh);
+  }
+}
 
-// terain
-
-// Generate a terrain
-// var xS = 63,
-//   yS = 63;
-// terrainScene = THREE_TERRAIN.Terrain({
-//   easing: THREE_TERRAIN.Terrain.Linear,
-//   frequency: 2.5,
-//   heightmap: THREE_TERRAIN.Terrain.DiamondSquare,
-//   material: new THREE.MeshBasicMaterial({ color: 0x5566aa }),
-//   maxHeight: 100,
-//   minHeight: -100,
-//   steps: 1,
-//   xSegments: xS,
-//   xSize: 1024,
-//   ySegments: yS,
-//   ySize: 1024,
-// });
-// // Assuming you already have your global scene, add the terrain to it
-// scene.add(terrainScene);
-
-// Optional:
-// // Get the geometry of the terrain across which you want to scatter meshes
-// var geo = terrainScene.children[0].geometry;
-// // Add randomly distributed foliage
-// decoScene = TTHREE_TERRAINHREE.Terrain.ScatterMeshes(geo, {
-//   mesh: new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 12, 6)),
-//   w: xS,
-//   h: yS,
-//   spread: 0.02,
-//   randomness: Math.random,
-// });
-// terrainScene.add(decoScene);
+scene.add(boxGroup);
+gui.add(boxGroup.rotation, "z").min(0).max(100);
 
 // Lights
-
 const pointLight = new THREE.PointLight(0xffffff, 2);
 pointLight.position.x = 2;
 pointLight.position.y = 2;
@@ -83,10 +69,11 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1000
 );
-camera.position.x = 0;
-camera.position.y = 0;
-camera.position.z = 5;
-camera.lookAt(plane.position);
+camera.position.x = -10;
+camera.position.y = -10;
+camera.position.z = 10;
+camera.up.set(0, 0, 1);
+camera.lookAt(boxGroup.position);
 scene.add(camera);
 
 // Controls
@@ -116,6 +103,7 @@ window.addEventListener("resize", () => {
 const tick = () => {
   controls.update();
 
+  boxGroup.rotation.z += 0.001;
   renderer.render(scene, camera);
   window.requestAnimationFrame(tick);
 };
