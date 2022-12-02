@@ -1,6 +1,11 @@
 import "./style.css";
 import * as THREE from "three";
+// import * as THREE_TERRAIN from "three.terrain.js";
+import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+// Debug
+const gui = new dat.GUI();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -8,25 +13,62 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
-/**
- * Axes Helper
- */
-const axesHelper = new THREE.AxesHelper(2);
-// scene.add(axesHelper);
-
 // Object
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
+const geometry = new THREE.PlaneGeometry(3, 3, 64, 64);
+
+// Materails
+const material = new THREE.MeshStandardMaterial({
+  color: "green",
   wireframe: true,
 });
-const mesh = new THREE.Mesh(geometry, material);
 
-mesh.position.x = 0;
-mesh.position.y = 0;
-mesh.position.z = 0;
+// Mesh
+const plane = new THREE.Mesh(geometry, material);
 
-scene.add(mesh);
+scene.add(plane);
+gui.add(plane.rotation, "x").min(0).max(100);
+
+// terain
+
+// Generate a terrain
+// var xS = 63,
+//   yS = 63;
+// terrainScene = THREE_TERRAIN.Terrain({
+//   easing: THREE_TERRAIN.Terrain.Linear,
+//   frequency: 2.5,
+//   heightmap: THREE_TERRAIN.Terrain.DiamondSquare,
+//   material: new THREE.MeshBasicMaterial({ color: 0x5566aa }),
+//   maxHeight: 100,
+//   minHeight: -100,
+//   steps: 1,
+//   xSegments: xS,
+//   xSize: 1024,
+//   ySegments: yS,
+//   ySize: 1024,
+// });
+// // Assuming you already have your global scene, add the terrain to it
+// scene.add(terrainScene);
+
+// Optional:
+// // Get the geometry of the terrain across which you want to scatter meshes
+// var geo = terrainScene.children[0].geometry;
+// // Add randomly distributed foliage
+// decoScene = TTHREE_TERRAINHREE.Terrain.ScatterMeshes(geo, {
+//   mesh: new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 12, 6)),
+//   w: xS,
+//   h: yS,
+//   spread: 0.02,
+//   randomness: Math.random,
+// });
+// terrainScene.add(decoScene);
+
+// Lights
+
+const pointLight = new THREE.PointLight(0xffffff, 2);
+pointLight.position.x = 2;
+pointLight.position.y = 2;
+pointLight.position.z = 2;
+scene.add(pointLight);
 
 // Sizes
 const sizes = {
@@ -41,8 +83,10 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1000
 );
-camera.position.z = 3;
-camera.lookAt(mesh.position);
+camera.position.x = 0;
+camera.position.y = 0;
+camera.position.z = 5;
+camera.lookAt(plane.position);
 scene.add(camera);
 
 // Controls
@@ -54,17 +98,6 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
-
-// Cursor
-// const cursor = {
-//   x: 0,
-//   y: 0,
-// };
-
-// window.addEventListener("mousemove", (event) => {
-//   cursor.x = event.clientX / sizes.width - 0.5;
-//   cursor.y = -(event.clientY / sizes.height - 0.5);
-// });
 
 window.addEventListener("resize", () => {
   // Update sizes
@@ -79,35 +112,8 @@ window.addEventListener("resize", () => {
   renderer.setSize(sizes.width, sizes.height);
 });
 
-// window.addEventListener("dblclick", () => {
-//   const fullscreenElement =
-//     document.fullscreenElement || document.webkitFullscreenElement;
-
-//   if (!fullscreenElement) {
-//     if (canvas.requestFullscreen) {
-//       canvas.requestFullscreen();
-//     } else if (canvas.webkitRequestFullscreen) {
-//       canvas.webkitRequestFullscreen();
-//     }
-//   } else {
-//     if (document.exitFullscreen) {
-//       document.exitFullscreen();
-//     } else if (document.webkitExitFullscreen) {
-//       document.webkitExitFullscreen();
-//     }
-//   }
-// });
-
 // animate
 const tick = () => {
-  mesh.rotation.x += 0.01;
-  mesh.rotation.y += 0.01;
-  mesh.rotation.z += 0.01;
-
-  // camera.position.x = cursor.x;
-  // camera.position.y = cursor.y;
-  // camera.lookAt(mesh.position);
-
   controls.update();
 
   renderer.render(scene, camera);
