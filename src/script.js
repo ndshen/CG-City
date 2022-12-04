@@ -19,27 +19,60 @@ const scene = new THREE.Scene();
 const axesHelper = new THREE.AxesHelper(2);
 scene.add(axesHelper);
 
-// Object
-const boxWidth = 1;
-const boxHeight = 1;
+// Map
+const mapWidth = 20;
+const mapHeight = 20;
+const roadPercentage = 0.5;
+const roadLength = 5;
+
 const boxMinDepth = 1;
 const boxMaxDepth = 5;
 
-const boxNumX = 20;
-const boxNumY = 20;
+let map = Array(mapHeight)
+  .fill()
+  .map(() => Array(mapWidth).fill(0));
+
+for (let i = 0; i < mapHeight; i++) {
+  for (let j = 0; j < mapWidth; j++) {
+    if (map[i][j] == 0) {
+      if (Math.random() < roadPercentage) {
+        // is road
+        for (let k = 0; k < roadLength; k++) {
+          if (map[i][j + k] == 0) {
+            map[i][k] = boxMinDepth;
+          }
+        }
+
+        for (let k = 0; k < roadLength; k++) {
+          if (i + k < mapHeight && map[i + k][j] == 0) {
+            map[i + k][j] = boxMinDepth;
+          }
+        }
+      } else {
+        // is building
+        map[i][j] = boxMaxDepth;
+      }
+    }
+  }
+}
+
+// Object
+const boxWidth = 1;
+const boxHeight = 1;
 
 const boxGroup = new THREE.Group();
-for (let i = 0; i < boxNumY; i++) {
-  for (let j = 0; j < boxNumX; j++) {
-    let boxDepth = Math.max(Math.random() * boxMaxDepth, boxMinDepth);
+for (let i = 0; i < mapHeight; i++) {
+  for (let j = 0; j < mapWidth; j++) {
+    let boxDepth = map[i][j];
     const box = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       color: "green",
       wireframe: true,
     });
     const mesh = new THREE.Mesh(box, material);
-    mesh.position.x = j * boxWidth + boxWidth / 2 - (boxNumX * boxWidth) / 2;
-    mesh.position.y = i * boxHeight + boxHeight / 2 - (boxNumY * boxHeight) / 2;
+    mesh.position.x = j * boxWidth + boxWidth / 2 - (mapWidth * boxWidth) / 2;
+    mesh.position.y =
+      i * boxHeight + boxHeight / 2 - (mapHeight * boxHeight) / 2;
     mesh.position.z = boxDepth / 2;
 
     boxGroup.add(mesh);
@@ -53,7 +86,7 @@ gui.add(boxGroup.rotation, "z").min(0).max(100);
 const pointLight = new THREE.PointLight(0xffffff, 2);
 pointLight.position.x = 2;
 pointLight.position.y = 2;
-pointLight.position.z = 2;
+pointLight.position.z = 10;
 scene.add(pointLight);
 
 // Sizes
