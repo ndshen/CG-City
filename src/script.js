@@ -2,6 +2,7 @@ import "./style.css";
 import * as THREE from "three";
 import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import "./perlin.js";
 import * as util from "./util.js";
 
@@ -13,6 +14,7 @@ let scene;
 let renderer;
 let camera;
 let controls;
+let gltfLoader = new GLTFLoader();
 
 // city variables
 const colors = {
@@ -20,6 +22,10 @@ const colors = {
   CITY_BASE: 0x5c4033, // Dark Brown
   BUILDING_BASE: 0x696969,
   GROUND_BASE: 0x00a300,
+};
+const assetPath = {
+  STRAIGHT_ROAD: "/roadAssets/straightroadPath/assets.gltf",
+  CROSS_ROAD: "/roadAssets/Fourway cross gltf/CG-City Assets.gltf",
 };
 let buildingMap;
 
@@ -29,12 +35,13 @@ const cityConfigurations = {
   roadWidth: 10,
   blockWidth: 25,
 
-  cityBaseHeight: 5,
+  cityBaseHeight: 10,
   buildingBaseHeight: 3,
-  groundBaseHeight: 0.1,
+  groundBaseHeight: 1,
+  roadHeight: 1,
 
-  buildingScatter: 0.9, // range: [0, 1]
-  buildingThreshold: 0.2, // range: [0, 1], smaller threshold -> more buildings
+  buildingScatter: 0.8, // range: [0, 1]
+  buildingThreshold: 0.3, // range: [0, 1], smaller threshold -> more buildings
 };
 
 function init() {
@@ -47,6 +54,7 @@ function init() {
   generateBuildingMap(setPerlinNoiseSeed, getPerlinNoiseValue);
   generateCityBase();
   generateBlocks();
+  generateRoads();
 
   generateEventListener();
 }
@@ -193,14 +201,14 @@ function isBuildingBlock(i, j) {
   return buildingMap[i][j] >= cityConfigurations.buildingThreshold;
 }
 
-function getSceneXCoordinate(i) {
+function getBlockXCoordinate(i) {
   const blockWidth = cityConfigurations.blockWidth;
   const roadWidth = cityConfigurations.roadWidth;
 
   return i * (blockWidth + roadWidth) + blockWidth / 2 - getCityWidth() / 2;
 }
 
-function getSceneZCoordinate(j) {
+function getBlockZCoordinate(j) {
   const blockWidth = cityConfigurations.blockWidth;
   const roadWidth = cityConfigurations.roadWidth;
 
@@ -243,8 +251,8 @@ function generateBlocks() {
   const gridSize = cityConfigurations.gridSize;
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
-      const x = getSceneXCoordinate(i);
-      const z = getSceneZCoordinate(j);
+      const x = getBlockXCoordinate(i);
+      const z = getBlockZCoordinate(j);
       if (isBuildingBlock(i, j)) {
         // is building block
         generateBuildingBase(x, z);
@@ -256,10 +264,118 @@ function generateBlocks() {
   }
 }
 
+function loadGLTF(gltfPath, callback) {
+  gltfLoader.load(
+    gltfPath,
+    (gltf) => {
+      callback(gltf);
+    },
+    (progress) => {
+      console.log("progress");
+      console.log(progress);
+    },
+    (error) => {
+      console.log("error");
+      console.log(error);
+    }
+  );
+}
+
+function onStraightRoadLoaded(gltf) {
+  console.log("straight road loaded success");
+  console.log(gltf);
+
+  const blockWidth = cityConfigurations.blockWidth;
+  const roadWidth = cityConfigurations.roadWidth;
+  const roadHeight = cityConfigurations.roadHeight;
+  const gridSize = cityConfigurations.gridSize;
+
+  let road = gltf.scene.children[0];
+  resizeObject(road, blockWidth, roadWidth, roadHeight);
+
+  console.log(road);
+
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      const blockX = getBlockXCoordinate(i);
+      const blockZ = getBlockZCoordinate(j);
+
+      if (j < gridSize - 1) {
+        const roadCol = road.clone();
+        roadCol.position.set(
+          blockX,
+          roadHeight / 2,
+          blockZ + (blockWidth + roadWidth) / 2
+        );
+
+        scene.add(roadCol);
+      }
+
+      if (i < gridSize - 1) {
+        let roadRow = road.clone();
+        roadRow.rotation.z += Math.PI / 2;
+        roadRow.position.set(
+          blockX + (blockWidth + roadWidth) / 2,
+          roadHeight / 2,
+          blockZ
+        );
+
+        scene.add(roadRow);
+      }
+    }
+  }
+}
+
+function onCrossRoadLoaded(gltf) {
+  console.log("cross road loaded success");
+  console.log(gltf);
+
+  const blockWidth = cityConfigurations.blockWidth;
+  const roadWidth = cityConfigurations.roadWidth;
+  const roadHeight = cityConfigurations.roadHeight;
+  const gridSize = cityConfigurations.gridSize;
+
+  let crossRoad = gltf.scene.children[0];
+  resizeObject(crossRoad, roadWidth, roadWidth, roadHeight);
+
+  console.log(crossRoad);
+
+  for (let i = 0; i < gridSize - 1; i++) {
+    for (let j = 0; j < gridSize - 1; j++) {
+      const blockX = getBlockXCoordinate(i);
+      const blockZ = getBlockZCoordinate(j);
+
+      const c = crossRoad.clone();
+      c.position.set(
+        blockX + (blockWidth + roadWidth) / 2,
+        roadHeight / 2,
+        blockZ + (blockWidth + roadWidth) / 2
+      );
+
+      scene.add(c);
+    }
+  }
+}
+
+function generateRoads() {
+  loadGLTF(assetPath.STRAIGHT_ROAD, onStraightRoadLoaded);
+  loadGLTF(assetPath.CROSS_ROAD, onCrossRoadLoaded);
+}
+
 function generateEventListener() {
   window.addEventListener("resize", resize);
 }
 
+function resizeObject(object, width, length, height) {
+  object.scale.set(1, 1, 1);
+  const box = new THREE.Box3().setFromObject(object);
+  const originSize = box.max.sub(box.min);
+  object.scale.set(
+    width / originSize.x,
+    length / originSize.z,
+    height / originSize.y
+  );
+}
 // Function called on window resize events.
 function resize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
