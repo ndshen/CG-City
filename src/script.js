@@ -1,117 +1,277 @@
 import "./style.css";
 import * as THREE from "three";
+import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import "./perlin.js";
+import * as util from "./util.js";
 
-// Canvas
-const canvas = document.querySelector("canvas.webgl");
+const gui = new dat.GUI();
 
-// Scene
-const scene = new THREE.Scene();
+// THREE.js variables
+let canvas = document.querySelector("canvas.webgl");
+let scene;
+let renderer;
+let camera;
+let controls;
 
-/**
- * Axes Helper
- */
-const axesHelper = new THREE.AxesHelper(2);
-// scene.add(axesHelper);
+// city variables
+const colors = {
+  WHITE: 0xffffff,
+  CITY_BASE: 0x5c4033, // Dark Brown
+  BUILDING_BASE: 0x696969,
+  GROUND_BASE: 0x00a300,
+};
+let buildingMap;
 
-// Object
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  wireframe: true,
-});
-const mesh = new THREE.Mesh(geometry, material);
+// adjustable configurations
+const cityConfigurations = {
+  gridSize: 20,
+  roadWidth: 10,
+  blockWidth: 25,
 
-mesh.position.x = 0;
-mesh.position.y = 0;
-mesh.position.z = 0;
+  cityBaseHeight: 5,
+  buildingBaseHeight: 3,
+  groundBaseHeight: 0.1,
 
-scene.add(mesh);
-
-// Sizes
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
+  buildingScatter: 0.9, // range: [0, 1]
+  buildingThreshold: 0.2, // range: [0, 1], smaller threshold -> more buildings
 };
 
-// Camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  sizes.width / sizes.height,
-  1,
-  1000
-);
-camera.position.z = 3;
-camera.lookAt(mesh.position);
-scene.add(camera);
+function init() {
+  generateScene();
+  generateRenderer();
+  generateLighting();
+  generateCamera();
+  generateControls();
 
-// Controls
-const controls = new OrbitControls(camera, canvas);
+  generateBuildingMap(setPerlinNoiseSeed, getPerlinNoiseValue);
+  generateCityBase();
+  generateBlocks();
 
-// Renderer
-const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
-});
-renderer.setSize(sizes.width, sizes.height);
-renderer.render(scene, camera);
+  generateEventListener();
+}
 
-// Cursor
-// const cursor = {
-//   x: 0,
-//   y: 0,
-// };
+function generateScene() {
+  scene = new THREE.Scene();
+}
 
-// window.addEventListener("mousemove", (event) => {
-//   cursor.x = event.clientX / sizes.width - 0.5;
-//   cursor.y = -(event.clientY / sizes.height - 0.5);
-// });
+function generateRenderer() {
+  renderer = new THREE.WebGL1Renderer({ canvas: canvas, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
-window.addEventListener("resize", () => {
-  // Update sizes
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
+function generateLighting() {
+  // Variables used to create the hemisphere light
+  let skyColor = colors.WHITE;
+  let groundColor = colors.WHITE;
+  let colorIntensity = 0.4;
 
-  // Update camera
-  camera.aspect = sizes.width / sizes.height;
+  // Create a light source positioned directly above the scene, with color fading from the sky color to the ground color.
+  let hemisphereLight = new THREE.HemisphereLight(
+    skyColor,
+    groundColor,
+    colorIntensity
+  );
+
+  // Create the directional lights which we use to simulate daylight:
+
+  // Variables used to create the directional light
+  let shadowLightColor = colors.WHITE;
+  let shadowLightIntensity = 0.25;
+
+  let shadowLight = new THREE.DirectionalLight(
+    shadowLightColor,
+    shadowLightIntensity
+  );
+
+  // Initialize the variables used to create the shadow light
+  let x_position = getCityWidth() / 2;
+  let y_position = 800;
+  let z_position = getCityWidth() / 2;
+
+  // Set the shadow camera position ( x, y, z ) in world space.
+  shadowLight.position.set(x_position, y_position, z_position);
+
+  // Variables used to create the back light
+  let backLightColor = colors.WHITE;
+  let backLightIntensity = 0.1;
+
+  let backLight = new THREE.DirectionalLight(
+    backLightColor,
+    backLightIntensity
+  );
+
+  // Set the back light position ( x, y, z ) in world space.
+  backLight.position.set(-120, 180, 60);
+
+  scene.add(backLight, shadowLight, hemisphereLight);
+}
+
+function generateCamera() {
+  let fieldOfView = 75;
+  let aspect = window.innerWidth / window.innerHeight;
+  let nearPlane = 1;
+  let farPlane = 5000;
+  camera = new THREE.PerspectiveCamera(
+    fieldOfView,
+    aspect,
+    nearPlane,
+    farPlane
+  );
+  camera.position.x = 500;
+  camera.position.y = 500;
+  camera.position.z = 500;
+  camera.up.set(0, 1, 0);
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  scene.add(camera);
+}
+
+function generateControls() {
+  controls = new OrbitControls(camera, canvas);
+  controls.maxPolarAngle = Math.PI / 2;
+}
+
+function setPerlinNoiseSeed() {
+  window.noise.seed(Math.random());
+}
+
+function getPerlinNoiseValue(x, y, frequency) {
+  return Math.abs(window.noise.perlin2(x / frequency, y / frequency)); // +
+  // Math.abs(window.noise.perlin2((x / frequency) * 0.5, (y / frequency) * 0.5)) +
+  // Math.abs(window.noise.perlin2((x / frequency) * 0.5, (y / frequency) * 0.5))
+}
+
+function generateBuildingMap(noiseSeedFn, noiseValueFn) {
+  noiseSeedFn();
+  const gridSize = cityConfigurations.gridSize;
+
+  buildingMap = Array(gridSize)
+    .fill()
+    .map(() => Array(gridSize).fill(0));
+
+  // set initial buildingMap value using the noiseVaueFn (ex. perlin noise fn)
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      buildingMap[i][j] = noiseValueFn(
+        i,
+        j,
+        1 / cityConfigurations.buildingScatter
+      );
+    }
+  }
+
+  // normalize the value to be in the range [0, 1]
+  buildingMap = util.normalize2DArray(buildingMap);
+}
+
+function getCityWidth() {
+  const gridSize = cityConfigurations.gridSize;
+  const blockWidth = cityConfigurations.blockWidth;
+  const roadWidth = cityConfigurations.roadWidth;
+
+  return gridSize * blockWidth + (gridSize - 1) * roadWidth;
+}
+
+function generateCityBase() {
+  const baseHeight = cityConfigurations.cityBaseHeight;
+  const baseGeometry = new THREE.BoxGeometry(
+    getCityWidth(),
+    baseHeight,
+    getCityWidth()
+  );
+
+  const baseMaterial = new THREE.MeshLambertMaterial({
+    color: colors.CITY_BASE,
+  });
+  const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
+  baseMesh.position.set(0, -(baseHeight / 2), 0);
+
+  scene.add(baseMesh);
+}
+
+function isBuildingBlock(i, j) {
+  return buildingMap[i][j] >= cityConfigurations.buildingThreshold;
+}
+
+function getSceneXCoordinate(i) {
+  const blockWidth = cityConfigurations.blockWidth;
+  const roadWidth = cityConfigurations.roadWidth;
+
+  return i * (blockWidth + roadWidth) + blockWidth / 2 - getCityWidth() / 2;
+}
+
+function getSceneZCoordinate(j) {
+  const blockWidth = cityConfigurations.blockWidth;
+  const roadWidth = cityConfigurations.roadWidth;
+
+  return j * (blockWidth + roadWidth) + blockWidth / 2 - getCityWidth() / 2;
+}
+
+function generateBuildingBase(x, z) {
+  const baseHeight = cityConfigurations.buildingBaseHeight;
+  const blockWidth = cityConfigurations.blockWidth;
+  const baseGeometry = new THREE.BoxGeometry(
+    blockWidth,
+    baseHeight,
+    blockWidth
+  );
+  const baseMaterial = new THREE.MeshLambertMaterial({
+    color: colors.BUILDING_BASE,
+  });
+  const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
+  baseMesh.position.set(x, baseHeight / 2, z);
+  scene.add(baseMesh);
+}
+
+function generateGroundBase(x, z) {
+  const baseHeight = cityConfigurations.groundBaseHeight;
+  const blockWidth = cityConfigurations.blockWidth;
+  const baseGeometry = new THREE.BoxGeometry(
+    blockWidth,
+    baseHeight,
+    blockWidth
+  );
+  const baseMaterial = new THREE.MeshLambertMaterial({
+    color: colors.GROUND_BASE,
+  });
+  const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
+  baseMesh.position.set(x, baseHeight / 2, z);
+  scene.add(baseMesh);
+}
+
+function generateBlocks() {
+  const gridSize = cityConfigurations.gridSize;
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      const x = getSceneXCoordinate(i);
+      const z = getSceneZCoordinate(j);
+      if (isBuildingBlock(i, j)) {
+        // is building block
+        generateBuildingBase(x, z);
+      } else {
+        // is ground block
+        generateGroundBase(x, z);
+      }
+    }
+  }
+}
+
+function generateEventListener() {
+  window.addEventListener("resize", resize);
+}
+
+// Function called on window resize events.
+function resize() {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+}
 
-  // Update renderer
-  renderer.setSize(sizes.width, sizes.height);
-});
-
-// window.addEventListener("dblclick", () => {
-//   const fullscreenElement =
-//     document.fullscreenElement || document.webkitFullscreenElement;
-
-//   if (!fullscreenElement) {
-//     if (canvas.requestFullscreen) {
-//       canvas.requestFullscreen();
-//     } else if (canvas.webkitRequestFullscreen) {
-//       canvas.webkitRequestFullscreen();
-//     }
-//   } else {
-//     if (document.exitFullscreen) {
-//       document.exitFullscreen();
-//     } else if (document.webkitExitFullscreen) {
-//       document.webkitExitFullscreen();
-//     }
-//   }
-// });
-
-// animate
-const tick = () => {
-  mesh.rotation.x += 0.01;
-  mesh.rotation.y += 0.01;
-  mesh.rotation.z += 0.01;
-
-  // camera.position.x = cursor.x;
-  // camera.position.y = cursor.y;
-  // camera.lookAt(mesh.position);
-
+function render() {
   controls.update();
-
   renderer.render(scene, camera);
-  window.requestAnimationFrame(tick);
-};
+  window.requestAnimationFrame(render);
+}
 
-tick();
+init();
+render();
