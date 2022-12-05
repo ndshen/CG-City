@@ -24,13 +24,13 @@ const colors = {
   GROUND_BASE: 0x00a300,
 };
 const assetPath = {
-  STRAIGHT_ROAD: "/roadAssets/straightroadPath/assets.gltf",
-  CROSS_ROAD: "/roadAssets/Fourway cross gltf/CG-City Assets.gltf",
+  STRAIGHT_ROAD: "./roadAssets/straightroadPath/assets.gltf",
+  CROSS_ROAD: "./roadAssets/Fourway cross gltf/CG-City Assets.gltf",
 };
 let buildingMap;
 
 // adjustable configurations
-const cityConfigurations = {
+const cityConfig = {
   gridSize: 20,
   roadWidth: 10,
   blockWidth: 25,
@@ -151,7 +151,7 @@ function getPerlinNoiseValue(x, y, frequency) {
 
 function generateBuildingMap(noiseSeedFn, noiseValueFn) {
   noiseSeedFn();
-  const gridSize = cityConfigurations.gridSize;
+  const gridSize = cityConfig.gridSize;
 
   buildingMap = Array(gridSize)
     .fill()
@@ -160,11 +160,7 @@ function generateBuildingMap(noiseSeedFn, noiseValueFn) {
   // set initial buildingMap value using the noiseVaueFn (ex. perlin noise fn)
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
-      buildingMap[i][j] = noiseValueFn(
-        i,
-        j,
-        1 / cityConfigurations.buildingScatter
-      );
+      buildingMap[i][j] = noiseValueFn(i, j, 1 / cityConfig.buildingScatter);
     }
   }
 
@@ -173,15 +169,15 @@ function generateBuildingMap(noiseSeedFn, noiseValueFn) {
 }
 
 function getCityWidth() {
-  const gridSize = cityConfigurations.gridSize;
-  const blockWidth = cityConfigurations.blockWidth;
-  const roadWidth = cityConfigurations.roadWidth;
+  const gridSize = cityConfig.gridSize;
+  const blockWidth = cityConfig.blockWidth;
+  const roadWidth = cityConfig.roadWidth;
 
   return gridSize * blockWidth + (gridSize - 1) * roadWidth;
 }
 
 function generateCityBase() {
-  const baseHeight = cityConfigurations.cityBaseHeight;
+  const baseHeight = cityConfig.cityBaseHeight;
   const baseGeometry = new THREE.BoxGeometry(
     getCityWidth(),
     baseHeight,
@@ -198,26 +194,26 @@ function generateCityBase() {
 }
 
 function isBuildingBlock(i, j) {
-  return buildingMap[i][j] >= cityConfigurations.buildingThreshold;
+  return buildingMap[i][j] >= cityConfig.buildingThreshold;
 }
 
 function getBlockXCoordinate(i) {
-  const blockWidth = cityConfigurations.blockWidth;
-  const roadWidth = cityConfigurations.roadWidth;
+  const blockWidth = cityConfig.blockWidth;
+  const roadWidth = cityConfig.roadWidth;
 
   return i * (blockWidth + roadWidth) + blockWidth / 2 - getCityWidth() / 2;
 }
 
 function getBlockZCoordinate(j) {
-  const blockWidth = cityConfigurations.blockWidth;
-  const roadWidth = cityConfigurations.roadWidth;
+  const blockWidth = cityConfig.blockWidth;
+  const roadWidth = cityConfig.roadWidth;
 
   return j * (blockWidth + roadWidth) + blockWidth / 2 - getCityWidth() / 2;
 }
 
 function generateBuildingBase(x, z) {
-  const baseHeight = cityConfigurations.buildingBaseHeight;
-  const blockWidth = cityConfigurations.blockWidth;
+  const baseHeight = cityConfig.buildingBaseHeight;
+  const blockWidth = cityConfig.blockWidth;
   const baseGeometry = new THREE.BoxGeometry(
     blockWidth,
     baseHeight,
@@ -232,8 +228,8 @@ function generateBuildingBase(x, z) {
 }
 
 function generateGroundBase(x, z) {
-  const baseHeight = cityConfigurations.groundBaseHeight;
-  const blockWidth = cityConfigurations.blockWidth;
+  const baseHeight = cityConfig.groundBaseHeight;
+  const blockWidth = cityConfig.blockWidth;
   const baseGeometry = new THREE.BoxGeometry(
     blockWidth,
     baseHeight,
@@ -248,7 +244,7 @@ function generateGroundBase(x, z) {
 }
 
 function generateBlocks() {
-  const gridSize = cityConfigurations.gridSize;
+  const gridSize = cityConfig.gridSize;
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
       const x = getBlockXCoordinate(i);
@@ -285,15 +281,13 @@ function onStraightRoadLoaded(gltf) {
   console.log("straight road loaded success");
   console.log(gltf);
 
-  const blockWidth = cityConfigurations.blockWidth;
-  const roadWidth = cityConfigurations.roadWidth;
-  const roadHeight = cityConfigurations.roadHeight;
-  const gridSize = cityConfigurations.gridSize;
+  const blockWidth = cityConfig.blockWidth;
+  const roadWidth = cityConfig.roadWidth;
+  const roadHeight = cityConfig.roadHeight;
+  const gridSize = cityConfig.gridSize;
 
   let road = gltf.scene.children[0];
   resizeObject(road, blockWidth, roadWidth, roadHeight);
-
-  console.log(road);
 
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
@@ -330,15 +324,13 @@ function onCrossRoadLoaded(gltf) {
   console.log("cross road loaded success");
   console.log(gltf);
 
-  const blockWidth = cityConfigurations.blockWidth;
-  const roadWidth = cityConfigurations.roadWidth;
-  const roadHeight = cityConfigurations.roadHeight;
-  const gridSize = cityConfigurations.gridSize;
+  const blockWidth = cityConfig.blockWidth;
+  const roadWidth = cityConfig.roadWidth;
+  const roadHeight = cityConfig.roadHeight;
+  const gridSize = cityConfig.gridSize;
 
   let crossRoad = gltf.scene.children[0];
   resizeObject(crossRoad, roadWidth, roadWidth, roadHeight);
-
-  console.log(crossRoad);
 
   for (let i = 0; i < gridSize - 1; i++) {
     for (let j = 0; j < gridSize - 1; j++) {
