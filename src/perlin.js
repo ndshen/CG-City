@@ -372,3 +372,13 @@
     );
   };
 })(window);
+
+export function setPerlinNoiseSeed() {
+  window.noise.seed(Math.random());
+}
+
+export function getPerlinNoiseValue(x, y, frequency) {
+  return Math.abs(window.noise.perlin2(x / frequency, y / frequency)); // +
+  // Math.abs(window.noise.perlin2((x / frequency) * 0.5, (y / frequency) * 0.5)) +
+  // Math.abs(window.noise.perlin2((x / frequency) * 0.5, (y / frequency) * 0.5))
+}

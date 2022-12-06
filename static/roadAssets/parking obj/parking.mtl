@@ -1,0 +1,30 @@
+newmtl Road 1_7bb0519c-0990-4ffd-93fb-3d646c5ee14b
+Kd 0.243 0.247 0.318
+d 1.000
+newmtl Trees_2af7a320-4f2f-4e10-852d-2233105a033f
+Kd 0.251 0.808 0.482
+d 1.000
+newmtl Grass 1_e9d0a98a-f247-4909-bec0-7d0c5afe39bf
+Kd 0.039 0.639 0.290
+d 1.000
+newmtl Lines_5129d87b-9fc8-4877-b092-b845a839681d
+Kd 1.000 1.000 1.000
+d 1.000
+newmtl Concretes_092854fe-3a85-464a-bdbc-b95da4d0021f
+Kd 0.659 0.655 0.659
+d 1.000
+newmtl Footpath_269adb49-a677-4f54-8836-47cd87408374
+Kd 0.659 0.655 0.659
+d 1.000
+newmtl Road_6158f2a2-38bd-4609-a472-b51b35bfe462
+Kd 0.243 0.247 0.318
+d 1.000
+newmtl Footpaths_0a8cde1c-1f2e-4e39-961d-dc4507f187bf
+Kd 0.659 0.655 0.659
+d 1.000
+newmtl Crosswalk_d80f84fa-82bd-4046-ab08-a7135c1bfd7e
+Kd 1.000 1.000 1.000
+d 1.000
+newmtl Grass_7594ff47-ee41-4921-b76e-648e1eef61c6
+Kd 0.251 0.808 0.482
+d 1.000
