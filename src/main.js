@@ -6,6 +6,7 @@ import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
+import { CGCars } from "./cgcars.js";
 
 const gui = new dat.GUI();
 
@@ -17,12 +18,14 @@ let camera;
 let controls;
 let city;
 let weather;
+let cars;
 
 function init() {
   generateScene();
   generateRenderer();
   generateCity();
   generateWeather();
+  generateCars();
   generateLighting();
   generateCamera();
   generateControls();
@@ -46,6 +49,11 @@ function generateCity() {
 function generateWeather() {
   weather = new CGWeather(scene, cityConfig, city.cityWidth, 300, 20000);
   //weather.generateWeather();
+}
+
+function generateCars() {
+  cars = new CGCars(scene, cityConfig, new gltfLoader(), gltfAssetPath, city.cityWidth);
+  cars.generateCars();
 }
 
 function generateLighting() {
