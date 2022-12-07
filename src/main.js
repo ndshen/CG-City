@@ -22,12 +22,12 @@ let cars;
 
 function init() {
   generateScene();
+  generateCamera();
   generateRenderer();
   generateCity();
   generateWeather();
   generateCars();
   generateLighting();
-  generateCamera();
   generateControls();
   generateEventListener();
 }
@@ -37,7 +37,9 @@ function generateScene() {
 }
 
 function generateRenderer() {
-  renderer = new THREE.WebGL1Renderer({ canvas: canvas, antialias: true });
+  renderer = new THREE.WebGL1Renderer({ canvas: canvas, antialias: true});
+  renderer.shadowMapEnabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -57,50 +59,56 @@ function generateCars() {
 }
 
 function generateLighting() {
-  // Variables used to create the hemisphere light
+  // Create hemisphere light (used for ambient lighting)
   let skyColor = 0xffffff;
   let groundColor = 0xffffff;
   let colorIntensity = 0.4;
-
-  // Create a light source positioned directly above the scene, with color fading from the sky color to the ground color.
   let hemisphereLight = new THREE.HemisphereLight(
     skyColor,
     groundColor,
     colorIntensity
   );
+  scene.add(hemisphereLight);
 
-  // Create the directional lights which we use to simulate daylight:
-
-  // Variables used to create the directional light
-  let shadowLightColor = 0xffffff;
-  let shadowLightIntensity = 0.25;
-
-  let shadowLight = new THREE.DirectionalLight(
-    shadowLightColor,
-    shadowLightIntensity
+  // Create main directional light (used to simulate sunlight)
+  let sunLightColor = 0xffffff;
+  let sunLightIntensity = 0.8;
+  let sunLight = new THREE.DirectionalLight(
+    sunLightColor,
+    sunLightIntensity
   );
+  let sunLight_x = city.cityWidth / 4;
+  let sunLight_y = 600;
+  let sunLight_z = city.cityWidth / 3;
+  
+  sunLight.position.set(sunLight_x, sunLight_y, sunLight_z);
+  sunLight.target.position.set(0, 0, 0);
+  sunLight.castShadow = true;
+  sunLight.shadowDarkness = 0.5;
 
-  // Initialize the variables used to create the shadow light
-  let x_position = city.cityWidth / 2;
-  let y_position = 800;
-  let z_position = city.cityWidth / 2;
+  // Set the shadow camera properties
+  sunLight.shadow.camera.near = 200;
+  sunLight.shadow.camera.far = 1000;
+  let d = 500
+  sunLight.shadow.camera.left = -d;
+  sunLight.shadow.camera.right = d;
+  sunLight.shadow.camera.top = d;
+  sunLight.shadow.camera.bottom = -d;
 
-  // Set the shadow camera position ( x, y, z ) in world space.
-  shadowLight.position.set(x_position, y_position, z_position);
+  scene.add(sunLight);
+  scene.add(sunLight.target);
 
-  // Variables used to create the back light
+  //scene.add(new THREE.CameraHelper(sunLight.shadow.camera)); // toggle shadow camera debug
+
+  // Create a back light for additional ambient lighting
   let backLightColor = 0xffffff;
   let backLightIntensity = 0.1;
-
   let backLight = new THREE.DirectionalLight(
     backLightColor,
     backLightIntensity
   );
-
-  // Set the back light position ( x, y, z ) in world space.
   backLight.position.set(-120, 180, 60);
-
-  scene.add(backLight, shadowLight, hemisphereLight);
+  scene.add(backLight);
 }
 
 function generateCamera() {
