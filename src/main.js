@@ -5,6 +5,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
+import { CGWeather } from "./cgweather.js";
 
 const gui = new dat.GUI();
 
@@ -15,11 +16,13 @@ let renderer;
 let camera;
 let controls;
 let city;
+let weather;
 
 function init() {
   generateScene();
   generateRenderer();
   generateCity();
+  generateWeather();
   generateLighting();
   generateCamera();
   generateControls();
@@ -38,6 +41,11 @@ function generateRenderer() {
 function generateCity() {
   city = new CGCity(scene, cityConfig, new gltfLoader(), gltfAssetPath);
   city.generateCity();
+}
+
+function generateWeather() {
+  weather = new CGWeather(scene, cityConfig, city.cityWidth, 300, 20000);
+  //weather.generateWeather();
 }
 
 function generateLighting() {
@@ -111,12 +119,29 @@ function generateControls() {
   controls.maxPolarAngle = Math.PI / 2;
 }
 
+// keyboard action
+function logKey(event) {
+  var keyCode = event.which;
+  if (keyCode == 65 || keyCode == 97) {
+    weather.destoryWeather();
+    weather.generateWeather(0);
+  }
+  else if (keyCode == 83 || keyCode == 115) {
+    weather.destoryWeather();
+    weather.generateWeather(1);
+  }
+  else if (keyCode == 90 || keyCode == 122){
+    weather.destoryWeather();
+  }
+}
+
 function generateEventListener() {
   window.addEventListener("resize", resize);
   window.addEventListener("dblclick", () => {
     city.destoryCity();
     city.generateCity();
   });
+  window.addEventListener('keypress', logKey);
 }
 
 // Function called on window resize events.
@@ -131,6 +156,20 @@ function render() {
   renderer.render(scene, camera);
   window.requestAnimationFrame(render);
 }
+
+// animation
+const clock = new THREE.Clock()
+const tick = () => {
+  const elapsedTime = clock.getElapsedTime();
+
+  // Update particles
+  if (weather && weather.gen) {
+    weather.update(0.2);
+  }
+  window.requestAnimationFrame(tick)
+}
+
+tick();
 
 init();
 render();
