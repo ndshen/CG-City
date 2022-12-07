@@ -63,6 +63,8 @@ export class CGCity {
 
   addToScene(object) {
     object.position.add(new THREE.Vector3().fromArray(this.config.origin));
+    object.castShadow = true;
+    object.receiveShadow = true;
     this.allObjects.push(object.uuid);
     this.scene.add(object);
   }
