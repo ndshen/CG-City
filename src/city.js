@@ -220,11 +220,12 @@ export class CGCity {
   };
 
   generateRoads() {
-    this.modelLoader.load(
-      this.assetPath.STRAIGHT_ROAD,
-      this.onStraightRoadLoaded
-    );
-    this.modelLoader.load(this.assetPath.CROSS_ROAD, this.onCrossRoadLoaded);
+    this.modelLoader
+      .load(this.assetPath.ROAD.STRAIGHT_ROAD)
+      .subscribe(this.onStraightRoadLoaded);
+    this.modelLoader
+      .load(this.assetPath.ROAD.CROSS_ROAD)
+      .subscribe(this.onCrossRoadLoaded);
   }
 
   get cityWidth() {
