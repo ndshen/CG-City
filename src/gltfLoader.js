@@ -3,6 +3,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 export const gltfAssetPath = {
   STRAIGHT_ROAD: "roadAssets/straightroadPath/assets.gltf",
   CROSS_ROAD: "roadAssets/Fourway cross gltf/CG-City Assets.gltf",
+  SMALL_CAR: "vehicleAssets/small car 2 gltf/smallCar2.gltf",
+  MINI_BUS: "vehicleAssets/minibus gltf/minibus.gltf",
 };
 
 export class gltfLoader {
