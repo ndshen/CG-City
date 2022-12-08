@@ -15,10 +15,26 @@ export function normalize2DArray(a) {
 export function resizeObject(object, width, length, height) {
   object.scale.set(1, 1, 1);
   const box = new THREE.Box3().setFromObject(object);
-  const originSize = box.max.sub(box.min);
+  // const originSize = object
+  //   .localToWorld(box.max)
+  //   .sub(object.localToWorld(box.min));
+  const originSize = box.getSize(new THREE.Vector3());
   object.scale.set(
     width / originSize.x,
     length / originSize.z,
     height / originSize.y
   );
+}
+
+export function getRandomElement(array) {
+  if (array.length == 0) {
+    return null;
+  }
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+export function reCenterObj(obj) {
+  const box = new THREE.Box3().setFromObject(obj);
+  const boxCenter = box.getCenter(new THREE.Vector3());
+  obj.position.set(-boxCenter.x, -boxCenter.y, -boxCenter.z);
 }

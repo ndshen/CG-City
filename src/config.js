@@ -11,14 +11,18 @@ export const cityConfig = {
   origin: [0, 0, 0],
 
   gridSize: 20,
-  roadWidth: 10,
+  roadWidth: 25,
   blockWidth: 25,
 
   cityBaseHeight: 10,
-  buildingBaseHeight: 3,
+  buildingBaseHeight: 2,
   groundBaseHeight: 1,
   roadHeight: 1,
 
-  buildingScatter: 0.8, // range: [0, 1]
-  buildingThreshold: 0.3, // range: [0, 1], smaller threshold -> more buildings
+  buildingScatter: 0.7, // range: [0, 1]
+  buildingThreshold: 0.2, // range: [0, 1], smaller threshold -> more buildings
+
+  maxBuildingLevel: 10,
+  buildingLevelHeight: 10,
+  buildingPadding: 2,
 };

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as util from "./util.js";
 import * as perlin from "./perlin";
+import { CGBuildingGenerator } from "./building.js";
 
 export class CGCity {
   constructor(scene, config, modelLoader, assetPath) {
@@ -14,6 +15,12 @@ export class CGCity {
 
     // a gridSize X gridSize 2D array, indicates which blocks are ground and which are buildings
     this.buildingMap = [[]];
+
+    this.buildingGeneratror = new CGBuildingGenerator(
+      config,
+      modelLoader,
+      assetPath
+    );
   }
 
   generateCity() {
@@ -136,6 +143,36 @@ export class CGCity {
     this.addToScene(baseMesh);
   }
 
+  getBuildingLevel(i, j) {
+    if (this.buildingMap[i][j] < this.config.buildingThreshold) {
+      return 0;
+    }
+
+    const maxBuildingLevel = this.config.maxBuildingLevel;
+    const minBuildingLevel = 1;
+    return (
+      ((this.buildingMap[i][j] - this.config.buildingThreshold) /
+        (1 - this.config.buildingThreshold)) *
+        (maxBuildingLevel - minBuildingLevel) +
+      minBuildingLevel
+    );
+  }
+
+  generateBuilding(x, z, level) {
+    this.buildingGeneratror
+      .generateRandomBuilding(level)
+      .subscribe((building) => {
+        const b = building.clone();
+        const box = new THREE.Box3().setFromObject(b);
+        const bSize = box.getSize(new THREE.Vector3());
+        util.reCenterObj(b);
+        b.position.add(
+          new THREE.Vector3(x, this.config.buildingBaseHeight + bSize.y / 2, z)
+        );
+        this.addToScene(b);
+      });
+  }
+
   generateBlocks() {
     const gridSize = this.config.gridSize;
     for (let i = 0; i < gridSize; i++) {
@@ -145,6 +182,7 @@ export class CGCity {
         if (this.isBuildingBlock(i, j)) {
           // is building block
           this.generateBuildingBase(x, z);
+          this.generateBuilding(x, z, this.getBuildingLevel(i, j));
         } else {
           // is ground block
           this.generateGroundBase(x, z);
