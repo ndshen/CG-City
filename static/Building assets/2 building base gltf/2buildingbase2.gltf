@@ -1,0 +1,354 @@
+{
+  "asset": { "version": "2.0", "generator": "VECTARY" },
+  "nodes": [
+    {
+      "translation": [
+        0.0026499996185302735, 4.440892098500626e-19, -0.0026499996185302683
+      ],
+      "scale": [0.001, 0.001, 0.001],
+      "rotation": [-0.7071067811865475, 0, 0, 0.7071067811865476],
+      "name": "Building",
+      "children": [1, 2, 8]
+    },
+    {
+      "translation": [-2.6499996185302734, -2.649999618530268, 0],
+      "scale": [1, 1, 1],
+      "rotation": [0, 0, 0, 1],
+      "name": "Project Name 1"
+    },
+    {
+      "translation": [-4.769999313354492, 5.773159728050814e-15, 0],
+      "scale": [1, 1, 1],
+      "rotation": [0, 0, 1, 2.83276944882399e-16],
+      "name": "Building",
+      "children": [3, 4, 5, 6, 7]
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Ground floor",
+      "mesh": 0
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Marquee",
+      "mesh": 1
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Window frame",
+      "mesh": 2
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Window glass",
+      "mesh": 3
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Door",
+      "mesh": 4
+    },
+    {
+      "translation": [-2.6499996185302734, -2.649999618530268, 0],
+      "scale": [1, 1, 1],
+      "rotation": [0, 0, 0, 1],
+      "name": "Project Name"
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.9489649381781952, 0.08690125178766034, 0.16364067148528988, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "name": "Ground floor",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    },
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.9489649381781952, 0.08690125178766034, 0.16364067148528988, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "name": "Marquee",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    },
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [1, 1, 1, 1],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.2
+      },
+      "name": "Window and door frame",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    },
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.04455262731642138, 0.04614884242235095, 0.08021925873621505, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0
+      },
+      "name": "Window glass",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 1, "NORMAL": 2, "TEXCOORD_0": 3 },
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 5, "NORMAL": 6, "TEXCOORD_0": 7 },
+          "material": 1,
+          "indices": 4
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 9, "NORMAL": 10, "TEXCOORD_0": 11 },
+          "material": 2,
+          "indices": 8
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 13, "NORMAL": 14, "TEXCOORD_0": 15 },
+          "material": 3,
+          "indices": 12
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 17, "NORMAL": 18, "TEXCOORD_0": 19 },
+          "material": 2,
+          "indices": 16
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 420,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 208,
+      "max": [20, 30, 30],
+      "min": [-20, -30, 0],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 208,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 208,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 4,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 132,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 5,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 62,
+      "max": [26, 36, 30],
+      "min": [-20, -30, 21],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 6,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 62,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 7,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 62,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 8,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 576,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 9,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 288,
+      "max": [19.086000442504883, 27.702999114990234, 27.702999114990234],
+      "min": [-19.086000442504883, -27.702999114990234, 6.296999931335449],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 10,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 288,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 11,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 288,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 12,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 252,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 13,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 168,
+      "max": [18.176000595092773, 28.25, 27.702999114990234],
+      "min": [-18.176000595092773, -27.702999114990234, 0.5989999771118164],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 14,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 168,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 15,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 168,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 16,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 192,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 17,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 96,
+      "max": [10.069999694824219, 29, 27.264999389648438],
+      "min": [-10.069999694824219, 28, 0.7360000014305115],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 18,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 96,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 19,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 96,
+      "type": "VEC2"
+    }
+  ],
+  "bufferViews": [
+    { "buffer": 0, "byteOffset": 0, "byteLength": 1680, "target": 34963 },
+    { "buffer": 0, "byteOffset": 1680, "byteLength": 2496, "target": 34962 },
+    { "buffer": 0, "byteOffset": 4176, "byteLength": 2496, "target": 34962 },
+    { "buffer": 0, "byteOffset": 6672, "byteLength": 1664, "target": 34962 },
+    { "buffer": 0, "byteOffset": 8336, "byteLength": 528, "target": 34963 },
+    { "buffer": 0, "byteOffset": 8864, "byteLength": 744, "target": 34962 },
+    { "buffer": 0, "byteOffset": 9608, "byteLength": 744, "target": 34962 },
+    { "buffer": 0, "byteOffset": 10352, "byteLength": 496, "target": 34962 },
+    { "buffer": 0, "byteOffset": 10848, "byteLength": 2304, "target": 34963 },
+    { "buffer": 0, "byteOffset": 13152, "byteLength": 3456, "target": 34962 },
+    { "buffer": 0, "byteOffset": 16608, "byteLength": 3456, "target": 34962 },
+    { "buffer": 0, "byteOffset": 20064, "byteLength": 2304, "target": 34962 },
+    { "buffer": 0, "byteOffset": 22368, "byteLength": 1008, "target": 34963 },
+    { "buffer": 0, "byteOffset": 23376, "byteLength": 2016, "target": 34962 },
+    { "buffer": 0, "byteOffset": 25392, "byteLength": 2016, "target": 34962 },
+    { "buffer": 0, "byteOffset": 27408, "byteLength": 1344, "target": 34962 },
+    { "buffer": 0, "byteOffset": 28752, "byteLength": 768, "target": 34963 },
+    { "buffer": 0, "byteOffset": 29520, "byteLength": 1152, "target": 34962 },
+    { "buffer": 0, "byteOffset": 30672, "byteLength": 1152, "target": 34962 },
+    { "buffer": 0, "byteOffset": 31824, "byteLength": 768, "target": 34962 }
+  ],
+  "scene": 0,
+  "scenes": [{ "nodes": [0], "name": "Project Name" }],
+  "extensionsUsed": ["KHR_texture_transform"],
+  "buffers": [{ "byteLength": 32592, "uri": "CG-CityAssets.bin" }]
+}

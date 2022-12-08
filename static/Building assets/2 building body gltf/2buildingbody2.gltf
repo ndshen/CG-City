@@ -1,0 +1,240 @@
+{
+  "asset": { "version": "2.0", "generator": "VECTARY" },
+  "nodes": [
+    {
+      "translation": [
+        0.0026499996185302735, 4.440892098500626e-19, -0.0026499996185302683
+      ],
+      "scale": [0.001, 0.001, 0.001],
+      "rotation": [-0.7071067811865475, 0, 0, 0.7071067811865476],
+      "name": "Building",
+      "children": [1, 2, 6]
+    },
+    {
+      "translation": [-2.6499996185302734, -2.649999618530268, 0],
+      "scale": [1, 1, 1],
+      "rotation": [0, 0, 0, 1],
+      "name": "Project Name 1"
+    },
+    {
+      "translation": [-4.769999313354492, 5.773159728050814e-15, 0],
+      "scale": [1, 1, 1],
+      "rotation": [0, 0, 1, 2.83276944882399e-16],
+      "name": "Building",
+      "children": [3, 4, 5]
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Main building",
+      "mesh": 0
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Window glass",
+      "mesh": 1
+    },
+    {
+      "translation": [-2.1199996948242186, -2.6499996185302734, 0],
+      "scale": [1.0000000000000002, 1.0000000000000002, 1],
+      "rotation": [0, 0, 0.7071067811865475, 0.7071067811865476],
+      "name": "Window frames",
+      "mesh": 2
+    },
+    {
+      "translation": [-2.6499996185302734, -2.649999618530268, 0],
+      "scale": [1, 1, 1],
+      "rotation": [0, 0, 0, 1],
+      "name": "Project Name"
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5295232224172772, 0.5295232224172772, 0.5295232224172772, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.2
+      },
+      "name": "Main building",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    },
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.04455262731642138, 0.04614884242235095, 0.08021925873621505, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0
+      },
+      "name": "Window glass",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    },
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.18014428915439032, 0.18014428915439032, 0.18014428915439032, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "name": "Window frames and roof",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 1, "NORMAL": 2, "TEXCOORD_0": 3 },
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 5, "NORMAL": 6, "TEXCOORD_0": 7 },
+          "material": 1,
+          "indices": 4
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 9, "NORMAL": 10, "TEXCOORD_0": 11 },
+          "material": 2,
+          "indices": 8
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 1332,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 608,
+      "max": [20, 30, 90.05500030517578],
+      "min": [-20, -30, 30],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 608,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 608,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 4,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 720,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 5,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 480,
+      "max": [19.191999435424805, 29.191999435424805, 81.85299682617188],
+      "min": [-19.191999435424805, -29.191999435424805, 37.939998626708984],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 6,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 480,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 7,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 480,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 8,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 7440,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 9,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 3040,
+      "max": [20.700000762939453, 30.700000762939453, 82.85299682617188],
+      "min": [-20.700000762939453, -30.700000762939453, 37.939998626708984],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 10,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 3040,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 11,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 3040,
+      "type": "VEC2"
+    }
+  ],
+  "bufferViews": [
+    { "buffer": 0, "byteOffset": 0, "byteLength": 5328, "target": 34963 },
+    { "buffer": 0, "byteOffset": 5328, "byteLength": 7296, "target": 34962 },
+    { "buffer": 0, "byteOffset": 12624, "byteLength": 7296, "target": 34962 },
+    { "buffer": 0, "byteOffset": 19920, "byteLength": 4864, "target": 34962 },
+    { "buffer": 0, "byteOffset": 24784, "byteLength": 2880, "target": 34963 },
+    { "buffer": 0, "byteOffset": 27664, "byteLength": 5760, "target": 34962 },
+    { "buffer": 0, "byteOffset": 33424, "byteLength": 5760, "target": 34962 },
+    { "buffer": 0, "byteOffset": 39184, "byteLength": 3840, "target": 34962 },
+    { "buffer": 0, "byteOffset": 43024, "byteLength": 29760, "target": 34963 },
+    { "buffer": 0, "byteOffset": 72784, "byteLength": 36480, "target": 34962 },
+    { "buffer": 0, "byteOffset": 109264, "byteLength": 36480, "target": 34962 },
+    { "buffer": 0, "byteOffset": 145744, "byteLength": 24320, "target": 34962 }
+  ],
+  "scene": 0,
+  "scenes": [{ "nodes": [0], "name": "Project Name" }],
+  "extensionsUsed": ["KHR_texture_transform"],
+  "buffers": [{ "byteLength": 170064, "uri": "CG-CityAssets.bin" }]
+}
