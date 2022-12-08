@@ -2,6 +2,7 @@ import "./style.css";
 import * as THREE from "three";
 import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
 import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
@@ -15,7 +16,8 @@ let canvas = document.querySelector("canvas.webgl");
 let scene;
 let renderer;
 let camera;
-let controls;
+let pointerLockControls;
+let orbitControls;
 let city;
 let weather;
 let cars;
@@ -38,7 +40,7 @@ function generateScene() {
 
 function generateRenderer() {
   renderer = new THREE.WebGL1Renderer({ canvas: canvas, antialias: true});
-  renderer.shadowMapEnabled = true;
+  renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
@@ -84,7 +86,6 @@ function generateLighting() {
   sunLight.position.set(sunLight_x, sunLight_y, sunLight_z);
   sunLight.target.position.set(0, 0, 0);
   sunLight.castShadow = true;
-  sunLight.shadowDarkness = 0.5;
 
   // Set the shadow camera properties
   sunLight.shadow.camera.near = 200;
@@ -131,23 +132,75 @@ function generateCamera() {
 }
 
 function generateControls() {
-  controls = new OrbitControls(camera, canvas);
-  controls.maxPolarAngle = Math.PI / 2;
+  orbitControls = new OrbitControls(camera, canvas);
+  orbitControls.maxPolarAngle = Math.PI / 2;
+  orbitControls.enabled = true;
+
+  pointerLockControls = new PointerLockControls(camera, canvas);
+  pointerLockControls.enabled = false;
+
+  pointerLockControls.addEventListener( 'lock', function () {
+    camera.position.x = 0;
+    camera.position.y = cityConfig.groundBaseHeight + cityConfig.roadHeight + 1;
+    camera.position.z = 0;
+    camera.far = city.cityWidth / 2;
+    camera.updateProjectionMatrix();
+    camera.lookAt(new THREE.Vector3(0, camera.position.y, 0));  
+    
+    orbitControls.enabled = false;
+  } );
+  
+  pointerLockControls.addEventListener( 'unlock', function () {
+    camera.position.x = 500;
+    camera.position.y = 500;
+    camera.position.z = 500;
+    camera.far = 5000;
+    camera.updateProjectionMatrix();
+    camera.lookAt(new THREE.Vector3(0, 0, 0));  
+
+    pointerLockControls.enabled = false;
+    orbitControls.enabled = true;
+  } );
 }
 
 // keyboard action
 function logKey(event) {
-  var keyCode = event.which;
-  if (keyCode == 65 || keyCode == 97) {
-    weather.destoryWeather();
-    weather.generateWeather(0);
-  }
-  else if (keyCode == 83 || keyCode == 115) {
-    weather.destoryWeather();
-    weather.generateWeather(1);
-  }
-  else if (keyCode == 90 || keyCode == 122){
-    weather.destoryWeather();
+  switch(event.key) {
+    case '1': 
+      weather.destoryWeather();
+      weather.generateWeather(0);
+      break;
+    case '2':
+      weather.destoryWeather();
+      weather.generateWeather(0);
+      break;
+    case '0':
+      weather.destoryWeather();
+      break;
+    case 'z':
+      pointerLockControls.enabled = true;
+      pointerLockControls.lock(); // unlock is bound to 'esc' by default
+      break;    
+    case 'w':
+      if (pointerLockControls.enabled) {
+        pointerLockControls.moveForward(0.25)
+      }
+      break
+    case 'a':
+      if (pointerLockControls.enabled) {
+        pointerLockControls.moveRight(-0.25)
+      }
+      break
+    case 's':
+      if (pointerLockControls.enabled) {
+        pointerLockControls.moveForward(-0.25)
+      }
+        break
+    case 'd':
+      if (pointerLockControls.enabled) {
+        pointerLockControls.moveRight(0.25)
+      }
+      break;
   }
 }
 
@@ -156,6 +209,7 @@ function generateEventListener() {
   window.addEventListener("dblclick", () => {
     city.destoryCity();
     city.generateCity();
+    pointerLockControls.unlock();
   });
   window.addEventListener('keypress', logKey);
 }
@@ -168,7 +222,7 @@ function resize() {
 }
 
 function render() {
-  controls.update();
+  //controls.update();
   renderer.render(scene, camera);
   window.requestAnimationFrame(render);
 }
@@ -183,6 +237,8 @@ const tick = () => {
     weather.update(0.2);
   }
   window.requestAnimationFrame(tick)
+
+  //controls.update(elapsedTime);
 }
 
 tick();
