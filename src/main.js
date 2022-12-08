@@ -55,6 +55,15 @@ function generateWeather() {
   //weather.generateWeather();
 }
 
+const parameters = {
+  weather: 2
+}
+gui.add(parameters, 'weather').min(0).max(2).step(1).onChange(() => {
+  weather.destoryWeather();
+  weather.generateWeather(parameters.weather);
+  console.log(parameters.weather);
+ })
+
 function generateCars() {
   cars = new CGCars(scene, cityConfig, new gltfLoader(), gltfAssetPath, city.cityWidth);
   cars.generateAllCars();
