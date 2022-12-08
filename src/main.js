@@ -237,8 +237,6 @@ const tick = () => {
     weather.update(0.2);
   }
   window.requestAnimationFrame(tick)
-
-  //controls.update(elapsedTime);
 }
 
 tick();
