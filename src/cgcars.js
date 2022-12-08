@@ -26,10 +26,10 @@ export class CGCars {
      * Column: 
      * green: 120-219, yellow: 220-239, red: 0-119
      * */
-    this.trafficMod = 250;
+    this.trafficMod = 260;
     this.rowGreen = 100;
-    this.rowYellow = 125;
-    this.rowRed = 250;
+    this.rowYellow = 130;
+    this.rowRed = 260;
 
     // build queue for starting points
     const gridSize = this.config.gridSize;
@@ -113,7 +113,7 @@ export class CGCars {
       if (Math.random() < 0.5) {
         c.position.set(
           blockX + offset,
-          originSize.y * 0.05 * roadWidth,
+          originSize.y * 0.5, // * roadWidth,
           blockZ
         );
         this.movingDirs.push(0);
@@ -123,7 +123,7 @@ export class CGCars {
         c.rotateOnAxis(axis, Math.PI);
         c.position.set(
           blockX + offset + + roadWidth / 3.5,
-          originSize.y * 0.05 * roadWidth,
+          originSize.y * 0.5, //* roadWidth,
           blockZ
         );
         this.movingDirs.push(2);
@@ -137,7 +137,7 @@ export class CGCars {
 
         c.position.set(
           blockX,
-          originSize.y * 0.05 * roadWidth,
+          originSize.y * 0.5, //* roadWidth,
           blockZ + offset + roadWidth / 3.5
         );
         this.movingDirs.push(1);
@@ -148,7 +148,7 @@ export class CGCars {
         c.rotateOnAxis(axis, -Math.PI / 2);
         c.position.set(
           blockX,
-          originSize.y * 0.05 * roadWidth,
+          originSize.y * 0.5, // * roadWidth,
           blockZ + offset
         );
         this.movingDirs.push(3);
