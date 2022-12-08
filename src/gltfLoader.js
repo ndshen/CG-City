@@ -23,6 +23,9 @@ export const gltfAssetPath = {
       "Building assets/1 building roof gltf/1buildingroof.gltf",
       "Building assets/2 building roof gltf/2buildingroof.gltf",
     ],
+    ROOF: [
+      "Building assets/1 building roof gltf/1buildingroof.gltf",
+    ],
   },
 };
 

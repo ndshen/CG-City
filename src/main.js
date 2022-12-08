@@ -57,7 +57,7 @@ function generateWeather() {
 
 function generateCars() {
   cars = new CGCars(scene, cityConfig, new gltfLoader(), gltfAssetPath, city.cityWidth);
-  cars.generateCars();
+  cars.generateAllCars();
 }
 
 function generateLighting() {
@@ -235,6 +235,10 @@ const tick = () => {
   // Update particles
   if (weather && weather.gen) {
     weather.update(0.2);
+  }
+  // Update particles
+  if (cars && cars.gen && cars.allGenerates()) {
+    cars.update(0.2);
   }
   window.requestAnimationFrame(tick)
 }
