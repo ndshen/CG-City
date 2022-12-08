@@ -9,7 +9,7 @@ export class CGCars {
     this.cityWidth = cityWidth;
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
-    this.count = 150;
+    this.count = 200;
 
     this.allCarObjectIds = [];
     this.allCarObjects = [];
@@ -26,10 +26,10 @@ export class CGCars {
      * Column: 
      * green: 120-219, yellow: 220-239, red: 0-119
      * */
-    this.trafficMod = 230;
+    this.trafficMod = 250;
     this.rowGreen = 100;
-    this.rowYellow = 115;
-    this.rowRed = 230;
+    this.rowYellow = 125;
+    this.rowRed = 250;
 
     // build queue for starting points
     const gridSize = this.config.gridSize;
@@ -227,9 +227,8 @@ export class CGCars {
         const curBlock = this.isBlock[Math.ceil(x + this.cityWidth * 0.5)];
         const nextBlock = this.isBlock[Math.ceil(x + this.speeds[i] + this.cityWidth * 0.5)];
         const curLights = this.trafficLights[curBlock];
-        console.log(curLights);
         if (!(curBlock < 0 || curBlock == this.config.gridSize - 1 || curBlock == nextBlock ||
-          (curLights >= this.rowYellow && curLights < this.rowRed)))
+          (curLights >= this.rowYellow && curLights < this.rowGreen + this.rowYellow)))
           this.speeds[i] = 0;
       }
       else if (this.movingDirs[i] == 2) {
@@ -245,7 +244,8 @@ export class CGCars {
         const curBlock = this.isBlock[Math.ceil(x + this.cityWidth * 0.5 - this.maxCarSize * 1.2)];
         const nextBlock = this.isBlock[Math.ceil(x - this.speeds[i] + this.cityWidth * 0.5 - this.maxCarSize * 1.2)];
         const curLights = this.trafficLights[curBlock - 1];
-        if (!(curBlock <= 0 || curBlock == nextBlock || (curLights >= this.rowYellow && curLights < this.rowRed)))
+        if (!(curBlock <= 0 || curBlock == nextBlock ||
+          (curLights >= this.rowYellow && curLights < this.rowGreen + this.rowYellow)))
           this.speeds[i] = 0;
       }
     }
