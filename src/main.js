@@ -98,7 +98,7 @@ function generateLighting() {
 
   // Set the shadow camera properties
   sunLight.shadow.camera.near = 200;
-  sunLight.shadow.camera.far = 1000;
+  sunLight.shadow.camera.far = 1500;
   let d = 750
   sunLight.shadow.camera.left = -d;
   sunLight.shadow.camera.right = d;
