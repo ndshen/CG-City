@@ -90,7 +90,7 @@ function generateLighting() {
   );
   let sunLight_x = city.cityWidth / 4;
   let sunLight_y = 600;
-  let sunLight_z = city.cityWidth / 3;
+  let sunLight_z = city.cityWidth / 2;
   
   sunLight.position.set(sunLight_x, sunLight_y, sunLight_z);
   sunLight.target.position.set(0, 0, 0);
@@ -99,7 +99,7 @@ function generateLighting() {
   // Set the shadow camera properties
   sunLight.shadow.camera.near = 200;
   sunLight.shadow.camera.far = 1000;
-  let d = 500
+  let d = 750
   sunLight.shadow.camera.left = -d;
   sunLight.shadow.camera.right = d;
   sunLight.shadow.camera.top = d;
@@ -181,7 +181,7 @@ function logKey(event) {
       break;
     case '2':
       weather.destoryWeather();
-      weather.generateWeather(0);
+      weather.generateWeather(1);
       break;
     case '0':
       weather.destoryWeather();
