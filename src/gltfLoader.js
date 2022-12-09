@@ -7,6 +7,7 @@ export const gltfAssetPath = {
   ROAD: {
     STRAIGHT_ROAD: "roadAssets/straightroadPath/assets.gltf",
     CROSS_ROAD: "roadAssets/Fourway cross gltf/CG-City Assets.gltf",
+    TRAFFIC_LIGHT: "roadAssets/Traffic lights gltf/CG-City Assets.gltf",
   },
   BUILDING: {
     BASE: [

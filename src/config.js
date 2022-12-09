@@ -10,7 +10,7 @@ export const cityConfig = {
 
   origin: [0, 0, 0],
 
-  gridSize: 20,
+  gridSize: 13,
   roadWidth: 25,
   blockWidth: 25,
 
