@@ -8,6 +8,7 @@ import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
 import { CGCars } from "./cgcars.js";
+import { CGSky } from "./cgsky.js"
 
 const gui = new dat.GUI();
 
@@ -21,6 +22,7 @@ let orbitControls;
 let city;
 let weather;
 let cars;
+let sky;
 
 function init() {
   generateScene();
@@ -29,6 +31,7 @@ function init() {
   generateCity();
   generateWeather();
   generateCars();
+  generateSky();
   generateLighting();
   generateControls();
   generateEventListener();
@@ -55,11 +58,16 @@ function generateWeather() {
   //weather.generateWeather();
 }
 
+function generateSky() {
+  sky = new CGSky(scene, cityConfig);
+  sky.showSky();
+}
+
 const parameters = {
   weather: 2
 }
 gui.add(parameters, 'weather').min(0).max(2).step(1).onChange(() => {
-  weather.destoryWeather();
+  weather.destroyWeather();
   weather.generateWeather(parameters.weather);
   console.log(parameters.weather);
  })
@@ -150,13 +158,15 @@ function generateControls() {
 
   pointerLockControls.addEventListener( 'lock', function () {
     camera.position.x = 0;
-    camera.position.y = cityConfig.groundBaseHeight + cityConfig.roadHeight + 1;
+    camera.position.y = cityConfig.groundBaseHeight + cityConfig.roadHeight + 3;
     camera.position.z = 0;
-    camera.far = city.cityWidth / 2;
+    camera.far = city.cityWidth * 1.5;
     camera.updateProjectionMatrix();
     camera.lookAt(new THREE.Vector3(0, camera.position.y, 0));  
     
     orbitControls.enabled = false;
+
+    sky.showSky();
   } );
   
   pointerLockControls.addEventListener( 'unlock', function () {
@@ -165,10 +175,12 @@ function generateControls() {
     camera.position.z = 500;
     camera.far = 5000;
     camera.updateProjectionMatrix();
-    camera.lookAt(new THREE.Vector3(0, 0, 0));  
+    camera.lookAt(new THREE.Vector3(0, 0, 0));      
 
     pointerLockControls.enabled = false;
     orbitControls.enabled = true;
+
+    sky.hideSky();
   } );
 }
 
@@ -176,15 +188,18 @@ function generateControls() {
 function logKey(event) {
   switch(event.key) {
     case '1': 
-      weather.destoryWeather();
+      weather.destroyWeather();
       weather.generateWeather(0);
+      sky.updateSkyType(0);
       break;
     case '2':
-      weather.destoryWeather();
+      weather.destroyWeather();
       weather.generateWeather(1);
+      sky.updateSkyType(1);
       break;
     case '0':
-      weather.destoryWeather();
+      weather.destroyWeather();
+      sky.updateSkyType(-1);
       break;
     case 'z':
       pointerLockControls.enabled = true;
@@ -216,7 +231,7 @@ function logKey(event) {
 function generateEventListener() {
   window.addEventListener("resize", resize);
   window.addEventListener("dblclick", () => {
-    city.destoryCity();
+    city.destroyCity();
     city.generateCity();
     pointerLockControls.unlock();
   });

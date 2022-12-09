@@ -33,7 +33,7 @@ export class CGCity {
     this.generateRoads();
   }
 
-  destoryCity() {
+  destroyCity() {
     this.allObjects.map(this.removeObject);
     this.allObjects = [];
   }
