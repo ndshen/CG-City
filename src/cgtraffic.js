@@ -2,34 +2,44 @@ import * as THREE from "three";
 import * as util from "./util.js";
 
 
-export class CGCars {
+export class CGTraffic {
   constructor(scene, config, modelLoader, assetPath, cityWidth) {
     this.scene = scene;
     this.config = config;
     this.cityWidth = cityWidth;
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
-    this.count = 200;
+    this.count = 120;
 
     this.allCarObjectIds = [];
     this.allCarObjects = [];
     this.movingDirs = [];
     this.allStartPts = [];
     this.gens = [];
-    this.gen = false;
+    this.lightGens = [];
     this.speeds = [];
     this.trafficLights = [];
     this.isBlock = [];
+    this.lightObjRAs = [];
+    this.lightObjRBs = [];
+    this.lightObjCAs = [];
+    this.lightObjCBs = [];
     /**
      * Row:
      * green: 0-99, yellow: 100-119, red: 120-239
      * Column: 
      * green: 120-219, yellow: 220-239, red: 0-119
      * */
-    this.trafficMod = 260;
+    this.trafficMod = 300;
     this.rowGreen = 100;
-    this.rowYellow = 130;
-    this.rowRed = 260;
+    this.rowYellow = 150;
+    this.rowRed = 300;
+  }
+
+
+  init() {
+    this.gen = false;
+    this.ryg = [0xff0000, 0xffff00, 0x00ff00];
 
     // build queue for starting points
     const gridSize = this.config.gridSize;
@@ -43,10 +53,10 @@ export class CGCars {
     }
 
     // build block and road map
-    for (let i = 0; i < cityWidth; i++) {
-      const j = i % (config.roadWidth + config.blockWidth);
-      if (j < config.blockWidth) {
-        this.isBlock.push(Math.floor(i / (config.roadWidth + config.blockWidth)));
+    for (let i = 0; i < this.cityWidth; i++) {
+      const j = i % (this.config.roadWidth + this.config.blockWidth);
+      if (j < this.config.blockWidth) {
+        this.isBlock.push(Math.floor(i / (this.config.roadWidth + this.config.blockWidth)));
       }
       else {
         this.isBlock.push(-1);
@@ -54,24 +64,124 @@ export class CGCars {
     }
   }
 
-  generateAllCars(mode) {
+  generateTrafficLights() {
+    this.modelLoader.load(this.assetPath.ROAD.TRAFFIC_LIGHT).subscribe(this.onTrafficLightLoad);
+  }
+
+  onTrafficLightLoad = (obj) => {
+    const blockWidth = this.config.blockWidth;
+    const roadWidth = this.config.roadWidth;
+    const gridSize = this.config.gridSize;
+
+    let tLight = obj.clone();
+    const box = new THREE.Box3().setFromObject(obj);
+    const originSize = box.max.sub(box.min);
+    util.resizeObject(tLight, originSize.x * roadWidth * 10, originSize.z * roadWidth * 10, originSize.y * roadWidth * 10);
+    this.lightHeight = originSize.y * roadWidth * 10;
+    let l = tLight.clone();
+
+    /*
+     * group objects
+     * 
+     */
+    var group = new THREE.Group();
+    group.position.set(0, 0, 0);
+    group.add(l);
+
+    for (let i = 0; i < gridSize - 1; i++) {
+      for (let j = 0; j < gridSize - 1; j++) {
+        const blockX = this.getBlockXCoordinate(i);
+        const blockZ = this.getBlockZCoordinate(j);
+        let lightRA = group.clone();
+        /*
+         * Row
+         */
+        // red
+        lightRA.add(this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080));
+        // yellow
+        lightRA.add(this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080));
+        // green
+        lightRA.add(this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080));
+        lightRA.position.set(blockX + blockWidth * 0.7, 0, blockZ + blockWidth * 0.7);
+
+        let lightRB = group.clone();
+        // red
+        lightRB.add(this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080));
+        // yellow
+        lightRB.add(this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080));
+        // green
+        lightRB.add(this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080));
+        var axis = new THREE.Vector3(0., 1., 0.);
+        lightRB.rotateOnAxis(axis, Math.PI);
+        lightRB.position.set(blockX + blockWidth * 0.7 + roadWidth * 0.6, 0, blockZ + blockWidth * 0.7 + roadWidth * 0.6);
+
+        this.lightObjRAs.push(lightRA);
+        this.lightObjRBs.push(lightRB);
+
+        this.scene.add(lightRA);
+        this.scene.add(lightRB);
+        /*
+         * Column
+         */
+        // red
+        let lightCA = group.clone();
+        lightCA.add(this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080));
+        // yellow
+        lightCA.add(this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080));
+        // green
+        lightCA.add(this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080));
+        var axis = new THREE.Vector3(0., 1., 0.);
+        lightCA.rotateOnAxis(axis, -Math.PI / 2);
+        lightCA.position.set(blockX + blockWidth * 0.7 + roadWidth * 0.6, 0, blockZ + blockWidth * 0.7);
+
+        let lightCB = group.clone();
+        // red
+        lightCB.add(this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080));
+        // yellow
+        lightCB.add(this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080));
+        // green
+        lightCB.add(this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080));
+
+        lightCB.rotateOnAxis(axis, Math.PI / 2);
+        lightCB.position.set(blockX + blockWidth * 0.7, 0, blockZ + blockWidth * 0.7 + roadWidth * 0.6);
+
+        this.lightObjCAs.push(lightCA);
+        this.lightObjCBs.push(lightCB);
+
+        this.scene.add(lightCA);
+        this.scene.add(lightCB);
+
+        this.lightGens.push(true);
+      }
+    }
+  }
+
+  getSphere(x, y, z, color) {
+    let sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.52, 10, 10),
+      new THREE.MeshBasicMaterial({ color: color })
+    );
+    sphere.position.set(x, y, z);
+    return sphere;
+  }
+
+  generateTraffic(mode) {
+    this.generateTrafficLights();
     this.modelLoader.load(this.assetPath.SMALL_CAR).subscribe(this.generateCars);
     this.gen = true;
   }
 
   allGenerates() {
-    let gen = true;
-    for (let i = 0; i < this.count; i++) {
-      gen &= this.gens[i];
-    }
-    return gen;
+    const carsCond = (this.gens.length == this.count);
+    const lightsCond = (this.lightGens.length == (this.config.gridSize - 1) * (this.config.gridSize - 1));
+    return carsCond && lightsCond;
   }
 
   generateCars = (obj) => {
     const roadWidth = this.config.roadWidth;
 
-    let car = obj;
-    const box = new THREE.Box3().setFromObject(car);
+    let car = obj.clone();
+    const box = new THREE.Box3().setFromObject(obj);
     const originSize = box.max.sub(box.min);
     util.resizeObject(car, originSize.x * 0.05 * roadWidth, originSize.z * 0.05 * roadWidth, originSize.y * 0.05 * roadWidth);
     this.maxCarSize = Math.max(originSize.x, originSize.z, originSize.y) * 0.05 * roadWidth;
@@ -177,24 +287,39 @@ export class CGCars {
     return j * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
   }
 
-  destoryCars() {
+  destoryTraffic() {
     if (this.gen) {
       this.gen = false;
       for (let i = 0; i < this.count; i++) {
         if (this.gens[i]){
-          this.allCarObjects[i].geometry.dispose();
-          this.allCarObjects[i].material.dispose();
           this.scene.remove(this.allCarObjects[i]);
         }
       }
-      //this.allCarObjects.map(this.removeObject);
-      this.allCarObjects = [];
-      this.allCarObjectIds = [];
-      this.allStartPts = [];
-      this.movingDirs = [];
-      this.gens = [];
-      this.speeds = [];
+
+      for (let i = 0; i < (this.config.gridSize - 1) * (this.config.gridSize - 1); i++) {
+        if (this.lightGens[i]) {
+          this.scene.remove(this.lightObjCAs[i]);
+          this.scene.remove(this.lightObjCBs[i]);
+          this.scene.remove(this.lightObjRAs[i]);
+          this.scene.remove(this.lightObjRBs[i]);
+        }
+      }
     }
+    this.gen = false;
+    this.allCarObjectIds = [];
+    this.allCarObjects = [];
+    this.movingDirs = [];
+    this.allStartPts = [];
+    this.gens = [];
+    this.lightGens = [];
+    this.speeds = [];
+    this.trafficLights = [];
+    this.isBlock = [];
+    this.lightObjRAs = [];
+    this.lightObjRBs = [];
+    this.lightObjCAs = [];
+    this.lightObjCBs = [];
+    this.ryg = [];
   }
 
   addToScene(object) {
@@ -204,6 +329,58 @@ export class CGCars {
   }
 
   update(elapsedTime) {
+
+    /**
+     * Change light of traffic lights
+     * 
+     * */
+    for (let i = 0; i < this.config.gridSize - 1; i++) {
+      for (let k = 0; k < this.config.gridSize - 1; k++) {
+        // Row
+        let curLights = this.trafficLights[k];
+        let l = -1;
+        if (curLights < this.rowGreen)
+          l = 2;
+        else if (curLights >= this.rowYellow)
+          l = 0;
+        else
+          l = 1;
+        let idx = i * (this.config.gridSize - 1) + k;
+        for (let j = 0; j < 3; j++) {
+          if (l == j) {
+            //  console.log(this.lightObjCAs[i]);
+            this.lightObjRAs[idx].children[j + 1].material.color.setHex(this.ryg[j]);
+            this.lightObjRBs[idx].children[j + 1].material.color.setHex(this.ryg[j]);
+          }
+          else {
+            this.lightObjRAs[idx].children[j + 1].material.color.setHex(0x0000ff);
+            this.lightObjRBs[idx].children[j + 1].material.color.setHex(0x0000ff);
+          }
+        }
+
+        //Col 
+        curLights = this.trafficLights[i];
+        l = -1;
+        if (curLights >= this.rowYellow && curLights < this.rowYellow + this.rowGreen)
+          l = 2;
+        else if (curLights < this.rowYellow)
+          l = 0;
+        else
+          l = 1;
+        idx = i * (this.config.gridSize - 1) + k;
+        for (let j = 0; j < 3; j++) {
+          if (l == j) {
+            //  console.log(this.lightObjCAs[i]);
+            this.lightObjCAs[idx].children[j + 1].material.color.setHex(this.ryg[j]);
+            this.lightObjCBs[idx].children[j + 1].material.color.setHex(this.ryg[j]);
+          }
+          else {
+            this.lightObjCAs[idx].children[j + 1].material.color.setHex(0x0000ff);
+            this.lightObjCBs[idx].children[j + 1].material.color.setHex(0x0000ff);
+          }
+        }
+      }
+    }
 
     /**
      * Check traffic lights

@@ -7,7 +7,7 @@ import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
-import { CGCars } from "./cgcars.js";
+import { CGTraffic } from "./cgtraffic.js";
 
 const gui = new dat.GUI();
 
@@ -20,7 +20,7 @@ let pointerLockControls;
 let orbitControls;
 let city;
 let weather;
-let cars;
+let traffic;
 
 function init() {
   generateScene();
@@ -28,7 +28,7 @@ function init() {
   generateRenderer();
   generateCity();
   generateWeather();
-  generateCars();
+  generateTrafficSystem();
   generateLighting();
   generateControls();
   generateEventListener();
@@ -64,9 +64,10 @@ gui.add(parameters, 'weather').min(0).max(2).step(1).onChange(() => {
   console.log(parameters.weather);
  })
 
-function generateCars() {
-  cars = new CGCars(scene, cityConfig, new gltfLoader(), gltfAssetPath, city.cityWidth);
-  cars.generateAllCars();
+function generateTrafficSystem() {
+  traffic = new CGTraffic(scene, cityConfig, new gltfLoader(), gltfAssetPath, city.cityWidth);
+  traffic.init();
+  traffic.generateTraffic();
 }
 
 function generateLighting() {
@@ -218,6 +219,9 @@ function generateEventListener() {
   window.addEventListener("dblclick", () => {
     city.destoryCity();
     city.generateCity();
+    traffic.destoryTraffic();
+    traffic.init();
+    traffic.generateTraffic();
     pointerLockControls.unlock();
   });
   window.addEventListener('keypress', logKey);
@@ -246,13 +250,12 @@ const tick = () => {
     weather.update(0.2);
   }
   // Update particles
-  if (cars && cars.gen && cars.allGenerates()) {
-    cars.update(0.2);
+  if (traffic && traffic.gen && traffic.allGenerates()) {
+    traffic.update(0.2);
   }
   window.requestAnimationFrame(tick)
 }
 
-tick();
-
 init();
 render();
+tick();
