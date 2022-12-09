@@ -2,13 +2,13 @@ import "./style.css";
 import * as THREE from "three";
 import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
 import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
 import { CGSky } from "./cgsky.js"
 import { CGTraffic } from "./cgtraffic.js";
+import { CGFirstPersonControls } from "./cgFirstPersonControls";
 
 const gui = new dat.GUI();
 
@@ -17,12 +17,13 @@ let canvas = document.querySelector("canvas.webgl");
 let scene;
 let renderer;
 let camera;
-let pointerLockControls;
+let firstPersonControls;
 let orbitControls;
 let city;
 let weather;
 let sky;
 let traffic;
+let keyDict = {};
 
 function init() {
   generateScene();
@@ -151,41 +152,23 @@ function generateCamera() {
 function generateControls() {
   orbitControls = new OrbitControls(camera, canvas);
   orbitControls.maxPolarAngle = Math.PI / 2;
+
+  firstPersonControls = new CGFirstPersonControls(camera, canvas, cityConfig, onFirstPersonEnabled, onFirstPersonDisabled);
+}
+
+function onFirstPersonEnabled() {
+  sky.showSky();
+  orbitControls.enabled = false;
+}
+
+function onFirstPersonDisabled() {
+  sky.hideSky();
   orbitControls.enabled = true;
-
-  pointerLockControls = new PointerLockControls(camera, canvas);
-  pointerLockControls.enabled = false;
-
-  pointerLockControls.addEventListener( 'lock', function () {
-    camera.position.x = 0;
-    camera.position.y = cityConfig.groundBaseHeight + cityConfig.roadHeight + 3;
-    camera.position.z = 0;
-    camera.far = city.cityWidth * 1.5;
-    camera.updateProjectionMatrix();
-    camera.lookAt(new THREE.Vector3(0, camera.position.y, 0));  
-    
-    orbitControls.enabled = false;
-
-    sky.showSky();
-  } );
-  
-  pointerLockControls.addEventListener( 'unlock', function () {
-    camera.position.x = 500;
-    camera.position.y = 500;
-    camera.position.z = 500;
-    camera.far = 5000;
-    camera.updateProjectionMatrix();
-    camera.lookAt(new THREE.Vector3(0, 0, 0));      
-
-    pointerLockControls.enabled = false;
-    orbitControls.enabled = true;
-
-    sky.hideSky();
-  } );
 }
 
 // keyboard action
-function logKey(event) {
+function onKeyDown(event) {
+  keyDict[event.key] = true;
   switch(event.key) {
     case '1': 
       weather.destroyWeather();
@@ -202,30 +185,13 @@ function logKey(event) {
       sky.updateSkyType(-1);
       break;
     case 'z':
-      pointerLockControls.enabled = true;
-      pointerLockControls.lock(); // unlock is bound to 'esc' by default
-      break;    
-    case 'w':
-      if (pointerLockControls.enabled) {
-        pointerLockControls.moveForward(0.25)
-      }
-      break
-    case 'a':
-      if (pointerLockControls.enabled) {
-        pointerLockControls.moveRight(-0.25)
-      }
-      break
-    case 's':
-      if (pointerLockControls.enabled) {
-        pointerLockControls.moveForward(-0.25)
-      }
-        break
-    case 'd':
-      if (pointerLockControls.enabled) {
-        pointerLockControls.moveRight(0.25)
-      }
+      firstPersonControls.enable();
       break;
   }
+}
+
+function onKeyUp(event) {
+  keyDict[event.key] = false;
 }
 
 function generateEventListener() {
@@ -236,9 +202,9 @@ function generateEventListener() {
     traffic.destoryTraffic();
     traffic.init();
     traffic.generateTraffic();
-    pointerLockControls.unlock();
   });
-  window.addEventListener('keypress', logKey);
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp)
 }
 
 // Function called on window resize events.
@@ -268,6 +234,10 @@ const tick = () => {
     traffic.update(0.2);
   }
   window.requestAnimationFrame(tick)
+
+  if (firstPersonControls.isEnabled()) {
+    firstPersonControls.updatePosition(keyDict);
+  }
 }
 
 init();
