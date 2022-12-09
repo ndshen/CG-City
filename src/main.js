@@ -221,9 +221,11 @@ function render() {
 }
 
 // animation
-const clock = new THREE.Clock()
+const clock = new THREE.Clock();
+let prevTime = 0;
 const tick = () => {
-  const elapsedTime = clock.getElapsedTime();
+  let elapsedTime = clock.getElapsedTime() - prevTime;
+  prevTime = clock.getElapsedTime();
 
   // Update particles
   if (weather && weather.gen) {
@@ -236,7 +238,7 @@ const tick = () => {
   window.requestAnimationFrame(tick)
 
   if (firstPersonControls.isEnabled()) {
-    firstPersonControls.updatePosition(keyDict);
+    firstPersonControls.updatePosition(keyDict, elapsedTime);
   }
 }
 
