@@ -359,7 +359,7 @@ export class CGTraffic {
         }
 
         //Col 
-        curLights = this.trafficLights[i];
+        curLights = this.trafficLights[k];
         l = -1;
         if (curLights >= this.rowYellow && curLights < this.rowYellow + this.rowGreen)
           l = 2;
