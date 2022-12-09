@@ -353,8 +353,8 @@ export class CGTraffic {
             this.lightObjRBs[idx].children[j + 1].material.color.setHex(this.ryg[j]);
           }
           else {
-            this.lightObjRAs[idx].children[j + 1].material.color.setHex(0x0000ff);
-            this.lightObjRBs[idx].children[j + 1].material.color.setHex(0x0000ff);
+            this.lightObjRAs[idx].children[j + 1].material.color.setHex(0x808080);
+            this.lightObjRBs[idx].children[j + 1].material.color.setHex(0x808080);
           }
         }
 
@@ -375,8 +375,8 @@ export class CGTraffic {
             this.lightObjCBs[idx].children[j + 1].material.color.setHex(this.ryg[j]);
           }
           else {
-            this.lightObjCAs[idx].children[j + 1].material.color.setHex(0x0000ff);
-            this.lightObjCBs[idx].children[j + 1].material.color.setHex(0x0000ff);
+            this.lightObjCAs[idx].children[j + 1].material.color.setHex(0x808080);
+            this.lightObjCBs[idx].children[j + 1].material.color.setHex(0x808080);
           }
         }
       }
