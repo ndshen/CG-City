@@ -60,7 +60,6 @@ function generateWeather() {
 
 function generateSky() {
   sky = new CGSky(scene, cityConfig);
-  sky.showSky();
 }
 
 const parameters = {
