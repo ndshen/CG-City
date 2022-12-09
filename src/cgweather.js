@@ -149,7 +149,7 @@ export class CGWeather {
     this.addToScene(this.particles);
   }
 
-  destoryWeather() {
+  destroyWeather() {
     if (this.gen) {
       this.gen = false;
       this.particles.geometry.dispose();
