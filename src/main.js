@@ -7,7 +7,6 @@ import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
-import { CGCars } from "./cgcars.js";
 import { CGSky } from "./cgsky.js"
 import { CGTraffic } from "./cgtraffic.js";
 
@@ -23,7 +22,6 @@ let orbitControls;
 let city;
 let weather;
 let sky;
-let cars;
 let traffic;
 
 function init() {
@@ -33,7 +31,6 @@ function init() {
   generateCity();
   generateWeather();
   generateSky();
-  generateCars();
   generateTrafficSystem();
   generateLighting();
   generateControls();
