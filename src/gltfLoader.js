@@ -24,9 +24,6 @@ export const gltfAssetPath = {
       "Building assets/1 building roof gltf/1buildingroof.gltf",
       //"Building assets/2 building roof gltf/2buildingroof.gltf",
     ],
-    ROOF: [
-      "Building assets/1 building roof gltf/1buildingroof.gltf",
-    ],
   },
 };
 
@@ -71,12 +68,13 @@ export class gltfLoader {
   }
 
   fetchObjectFromGLTF(gltf) {
-    gltf.scene.children[0].traverse( function ( object ) { // recursively enable shadows on all child meshes
-      if ( object.isMesh )  {
+    gltf.scene.children[0].traverse(function (object) {
+      // recursively enable shadows on all child meshes
+      if (object.isMesh) {
         object.castShadow = true;
         object.receiveShadow = true;
       }
-  } );
+    });
     return gltf.scene.children[0];
   }
 }

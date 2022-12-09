@@ -162,14 +162,13 @@ export class CGCity {
     this.buildingGeneratror
       .generateRandomBuilding(level)
       .subscribe((building) => {
-        const b = building.clone();
-        const box = new THREE.Box3().setFromObject(b);
+        const box = new THREE.Box3().setFromObject(building);
         const bSize = box.getSize(new THREE.Vector3());
-        util.reCenterObj(b);
-        b.position.add(
+        util.reCenterObj(building);
+        building.position.add(
           new THREE.Vector3(x, this.config.buildingBaseHeight + bSize.y / 2, z)
         );
-        this.addToScene(b);
+        this.addToScene(building);
       });
   }
 
