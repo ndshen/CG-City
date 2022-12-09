@@ -9,7 +9,7 @@ export class CGTraffic {
     this.cityWidth = cityWidth;
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
-    this.count = 120;
+    this.count = 100;
 
     this.allCarObjectIds = [];
     this.allCarObjects = [];
@@ -30,10 +30,10 @@ export class CGTraffic {
      * Column: 
      * green: 120-219, yellow: 220-239, red: 0-119
      * */
-    this.trafficMod = 300;
-    this.rowGreen = 100;
-    this.rowYellow = 150;
-    this.rowRed = 300;
+    this.trafficMod = 500;
+    this.rowGreen = 150;
+    this.rowYellow = 250;
+    this.rowRed = 500;
   }
 
 
@@ -270,7 +270,7 @@ export class CGTraffic {
   }
 
   getSpeed() {
-    return (Math.random() + 1) * 0.25; 
+    return (Math.random() + 1) * 0.35; 
   }
 
   getBlockXCoordinate(i) {
