@@ -11,10 +11,8 @@ export class CGWeather {
   }
 
   generateWeather(mode) {
-    if (mode == 0)
-      this.generateSnow();
-    else if (mode == 1)
-      this.generateRain();
+    if (mode == 0) this.generateSnow();
+    else if (mode == 1) this.generateRain();
   }
 
   generateSnow() {
@@ -36,8 +34,7 @@ export class CGWeather {
      * z: [-0.5 * cityWidth, 0.5 * cityWidth]
      * y: [0, cityHeight]
      * */
-    for (let i = 0; i < count * 3; i = i + 3)
-    {
+    for (let i = 0; i < count * 3; i = i + 3) {
       // x
       positions[i] = (Math.random() - 0.5) * this.cityWidth;
       // z
@@ -51,7 +48,11 @@ export class CGWeather {
       colors[i + 2] = 1;
 
       // direction
-      const dir = new THREE.Vector3(Math.random() - 0.5, -1, Math.random() - 0.5);
+      const dir = new THREE.Vector3(
+        Math.random() - 0.5,
+        -1,
+        Math.random() - 0.5
+      );
       dir.normalize();
       this.dirs[i] = dir.x;
       this.dirs[i + 1] = dir.y;
@@ -59,13 +60,18 @@ export class CGWeather {
     }
 
     // Create the Three.js BufferAttribute and specify that each information is composed of 3 values
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-
+    particlesGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+    particlesGeometry.setAttribute(
+      "color",
+      new THREE.BufferAttribute(colors, 3)
+    );
 
     // Textures
     const textureLoader = new THREE.TextureLoader();
-    const particleTexture = textureLoader.load('/textures/particles/1.png');
+    const particleTexture = textureLoader.load("/textures/particles/1.png");
 
     // Material
     const particlesMaterial = new THREE.PointsMaterial();
@@ -79,7 +85,7 @@ export class CGWeather {
     particlesMaterial.vertexColors = true;
 
     // Particles
-    particlesGeometry.setDrawRange(0, this.drawRange/3);
+    particlesGeometry.setDrawRange(0, this.drawRange / 3);
     this.particles = new THREE.Points(particlesGeometry, particlesMaterial);
     this.addToScene(this.particles);
   }
@@ -123,14 +129,18 @@ export class CGWeather {
     }
 
     // Create the Three.js BufferAttribute and specify that each information is composed of 3 values
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-
+    particlesGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+    particlesGeometry.setAttribute(
+      "color",
+      new THREE.BufferAttribute(colors, 3)
+    );
 
     // Textures
     const textureLoader = new THREE.TextureLoader();
-    const particleTexture = textureLoader.load('/textures/particles/14.png');
-
+    const particleTexture = textureLoader.load("/textures/particles/14.png");
 
     // Material
     const particlesMaterial = new THREE.PointsMaterial();
@@ -167,33 +177,48 @@ export class CGWeather {
     const count = this.count;
     for (let i = 0; i < this.drawRange; i = i + 3) {
       if (Math.random() > 10.98) {
-        let dir = new THREE.Vector3(Math.random() - 0.5, -1, Math.random() - 0.5);
+        let dir = new THREE.Vector3(
+          Math.random() - 0.5,
+          -1,
+          Math.random() - 0.5
+        );
         dir.normalize();
         this.dirs[i] = dir.x;
         this.dirs[i + 1] = dir.y;
         this.dirs[i + 2] = dir.z;
       }
       // x
-      this.particles.geometry.attributes.position.array[i] += this.dirs[i] * elapsedTime * Math.random() * this.speed;
+      this.particles.geometry.attributes.position.array[i] +=
+        this.dirs[i] * elapsedTime * Math.random() * this.speed;
       // z
-      this.particles.geometry.attributes.position.array[i + 2] += this.dirs[i + 2] * elapsedTime * Math.random() * this.speed;
+      this.particles.geometry.attributes.position.array[i + 2] +=
+        this.dirs[i + 2] * elapsedTime * Math.random() * this.speed;
       // y
-      this.particles.geometry.attributes.position.array[i + 1] += this.dirs[i + 1] * elapsedTime * Math.random() * this.speed;
+      this.particles.geometry.attributes.position.array[i + 1] +=
+        this.dirs[i + 1] * elapsedTime * Math.random() * this.speed;
 
-      if (Math.abs(this.particles.geometry.attributes.position.array[i]) > this.cityWidth/2)
-        this.particles.geometry.attributes.position.array[i] = -this.particles.geometry.attributes.position.array[i];
+      if (
+        Math.abs(this.particles.geometry.attributes.position.array[i]) >
+        this.cityWidth / 2
+      )
+        this.particles.geometry.attributes.position.array[i] =
+          -this.particles.geometry.attributes.position.array[i];
 
-      if (Math.abs(this.particles.geometry.attributes.position.array[i + 2]) > this.cityWidth/2)
-        this.particles.geometry.attributes.position.array[i + 2] = -this.particles.geometry.attributes.position.array[i + 2];
+      if (
+        Math.abs(this.particles.geometry.attributes.position.array[i + 2]) >
+        this.cityWidth / 2
+      )
+        this.particles.geometry.attributes.position.array[i + 2] =
+          -this.particles.geometry.attributes.position.array[i + 2];
 
       if (this.particles.geometry.attributes.position.array[i + 1] < 0)
-        this.particles.geometry.attributes.position.array[i + 1] = this.cityHeight;
+        this.particles.geometry.attributes.position.array[i + 1] =
+          this.cityHeight;
     }
     if (this.drawRange > this.count * 3) {
       this.particles.geometry.setDrawRange(0, this.count);
-    }
-    else {
-      this.particles.geometry.setDrawRange(0, this.drawRange/3);
+    } else {
+      this.particles.geometry.setDrawRange(0, this.drawRange / 3);
       this.drawRange += 3;
     }
     this.particles.geometry.attributes.position.needsUpdate = true;

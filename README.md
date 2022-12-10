@@ -20,3 +20,8 @@ npm run build
 # Deploy to gh-pages after build
 npm run deploy
 ```
+
+## Dev
+
+Install the [prettier extension](https://prettier.io/) on the VSC editor.   
+Set it as the default formatter
