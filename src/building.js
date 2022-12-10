@@ -1,6 +1,25 @@
 import * as THREE from "three";
-import { map, first, forkJoin, combineLatest } from "rxjs";
-import { getRandomElement, reCenterObj, resizeObject } from "./util";
+import { map, first, combineLatest } from "rxjs";
+import {
+  getRandomElement,
+  reCenterObj,
+  resizeObject,
+  setModelColor,
+} from "./util";
+
+const ONE_LEVEL_BUILDING_COLORS = [
+  new THREE.Color(0x99e1d9),
+  new THREE.Color(0xf7f17e),
+  new THREE.Color(0xb2e4db),
+];
+
+const MULTI_LEVEL_BUILDING_COLORS = [
+  new THREE.Color("rgb(112, 101, 99)"),
+  new THREE.Color("rgb(116, 131, 134)"),
+  new THREE.Color("rgb(242, 239, 234)"),
+  new THREE.Color("rgb(239, 131, 84)"),
+  new THREE.Color("rgb(216, 247, 147)"),
+];
 
 export class CGBuildingGenerator {
   constructor(config, modelLoader, assetPath) {
@@ -10,30 +29,73 @@ export class CGBuildingGenerator {
   }
 
   generateRandomBuilding(level) {
-    const baseLoaded$ = this.modelLoader
-      .load(getRandomElement(this.assetPath.BUILDING.BASE))
-      .pipe(first());
-    const roofLoaded$ = this.modelLoader
-      .load(getRandomElement(this.assetPath.BUILDING.ROOF))
-      .pipe(first());
+    if (level == 1) {
+      const randomModelConfig = getRandomElement(
+        this.assetPath.BUILDING.ONE_LEVEL
+      );
+      return this.modelLoader.load(randomModelConfig.path).pipe(
+        map((obj) => {
+          const building = obj.clone();
 
-    const bodies = [];
-    for (let i = 1; i < level; i++) {
-      bodies.push(
-        this.modelLoader.load(getRandomElement(this.assetPath.BUILDING.BODY))
+          this.resizeAndRecenter(
+            building,
+            this.buildingComponentWidth,
+            this.buildingComponentWidth,
+            this.config.buildingLevelHeight
+          );
+
+          setModelColor(
+            randomModelConfig,
+            building,
+            getRandomElement(ONE_LEVEL_BUILDING_COLORS)
+          );
+          return building;
+        })
       );
     }
 
-    return combineLatest(baseLoaded$, roofLoaded$, ...bodies).pipe(
-      map(this.composeBuilding)
+    // return a multi-level building
+    const baseConfig = getRandomElement(this.assetPath.BUILDING.BASE);
+    const bodyConfig = getRandomElement(this.assetPath.BUILDING.BODY);
+    const roofConfig = getRandomElement(this.assetPath.BUILDING.ROOF);
+    const baseLoaded$ = this.modelLoader.load(baseConfig.path).pipe(first());
+    const bodyLoaded$ = this.modelLoader.load(bodyConfig.path).pipe(first());
+    const roofLoaded$ = this.modelLoader.load(roofConfig.path).pipe(first());
+
+    return combineLatest(baseLoaded$, roofLoaded$, bodyLoaded$).pipe(
+      map(([originBase, originRoof, originBody]) =>
+        this.composeMultiLevelBuilding(
+          originBase,
+          baseConfig,
+          originBody,
+          bodyConfig,
+          originRoof,
+          roofConfig,
+          level
+        )
+      )
     );
   }
 
-  composeBuilding = ([b, r, ...bodies]) => {
-    const base = b.clone();
-    const roof = r.clone();
+  resizeAndRecenter(obj, width, length, height) {
+    resizeObject(obj, width, length, height);
+    reCenterObj(obj);
+  }
+
+  composeMultiLevelBuilding = (
+    originBase,
+    baseConfig,
+    originBody,
+    bodyConfig,
+    originRoof,
+    roofConfig,
+    level
+  ) => {
+    const base = originBase.clone();
+    const roof = originRoof.clone();
 
     const building = new THREE.Group();
+    const buildingColor = getRandomElement(MULTI_LEVEL_BUILDING_COLORS);
 
     // base
     resizeObject(
@@ -47,19 +109,21 @@ export class CGBuildingGenerator {
       .getSize(new THREE.Vector3());
     reCenterObj(base);
     base.position.add(new THREE.Vector3(0, baseSize.y / 2, 0));
+    setModelColor(baseConfig, base, buildingColor);
     building.add(base);
 
     // bodies
-    for (let i = 0; i < bodies.length; i++) {
-      const body = bodies[i].clone();
+    const bodyNum = level - 1;
+    for (let i = 0; i < bodyNum; i++) {
+      const b = originBody.clone();
       resizeObject(
-        body,
+        b,
         this.buildingComponentWidth,
         this.buildingComponentWidth,
         this.config.buildingLevelHeight
       );
-      reCenterObj(body);
-      body.position.add(
+      reCenterObj(b);
+      b.position.add(
         new THREE.Vector3(
           0,
           baseSize.y +
@@ -68,7 +132,12 @@ export class CGBuildingGenerator {
           0
         )
       );
-      building.add(body);
+      setModelColor(bodyConfig, b, buildingColor);
+      building.add(b);
+    }
+
+    if (Math.random() > this.config.buildingRoofProb) {
+      return building;
     }
 
     // roof
@@ -85,12 +154,11 @@ export class CGBuildingGenerator {
     roof.position.add(
       new THREE.Vector3(
         0,
-        baseSize.y +
-          this.config.buildingLevelHeight * bodies.length +
-          roofSize.y / 2,
+        baseSize.y + this.config.buildingLevelHeight * bodyNum + roofSize.y / 2,
         0
       )
     );
+    setModelColor(roofConfig, roof, buildingColor);
     building.add(roof);
 
     return building;

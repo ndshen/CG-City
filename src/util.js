@@ -38,3 +38,9 @@ export function reCenterObj(obj) {
   const boxCenter = box.getCenter(new THREE.Vector3());
   obj.position.set(-boxCenter.x, -boxCenter.y, -boxCenter.z);
 }
+
+export function setModelColor(modelConfig, obj, color) {
+  if (Object.hasOwn(modelConfig, "setColor")) {
+    modelConfig.setColor(obj, color);
+  }
+}
