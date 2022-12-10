@@ -1,5 +1,6 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { BehaviorSubject, shareReplay, map, filter } from "rxjs";
+import * as THREE from "three";
 
 export const gltfAssetPath = {
   SMALL_CAR: "vehicleAssets/small car 2 gltf/smallCar2.gltf",
@@ -10,19 +11,88 @@ export const gltfAssetPath = {
     TRAFFIC_LIGHT: "roadAssets/trafficlightNew gltf/trafficlightNew.gltf",
   },
   BUILDING: {
+    ONE_LEVEL: [
+      {
+        path: "Building assets/2 building base gltf/2buildingbase2.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[1].children[0].material = newMaterial;
+          obj.children[1].children[1].material = newMaterial;
+        },
+      },
+    ],
     BASE: [
-      "Building assets/1 Building base gltf/1buildingbase.gltf",
-      "Building assets/2 building base gltf/2buildingbase2.gltf",
-      "Building assets/3 building base gltf/3buildingbase.gltf",
+      {
+        path: "Building assets/1 Building base gltf/1buildingbase.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[1].children[0].material = newMaterial;
+          obj.children[1].children[1].material = newMaterial;
+        },
+      },
+      {
+        path: "Building assets/3 building base gltf/3buildingbase.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[1].children[0].material = newMaterial;
+          obj.children[1].children[1].material = newMaterial;
+        },
+      },
     ],
     BODY: [
-      "Building assets/1 building body gltf/1buildingbody.gltf",
-      "Building assets/2 building body gltf/2buildingbody2.gltf",
-      "Building assets/3 building body gltf/3buildingbody.gltf",
+      {
+        path: "Building assets/1 building body gltf/1buildingbody.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[1].children[0].material = newMaterial;
+          obj.children[1].children[1].material = newMaterial;
+        },
+      },
+      {
+        path: "Building assets/2 building body gltf/2buildingbody2.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[1].children[0].material = newMaterial;
+          obj.children[1].children[1].material = newMaterial;
+        },
+      },
+      {
+        path: "Building assets/3 building body gltf/3buildingbody.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[0].material = newMaterial;
+        },
+      },
     ],
     ROOF: [
-      "Building assets/1 building roof gltf/1buildingroof.gltf",
-      //"Building assets/2 building roof gltf/2buildingroof.gltf",
+      {
+        path: "Building assets/1 building roof gltf/1buildingroof.gltf",
+        setColor: function (obj, color) {
+          const newMaterial = new THREE.MeshStandardMaterial();
+          newMaterial.color = color;
+          obj.children[1].children[0].material = newMaterial;
+          obj.children[1].children[1].material = newMaterial;
+        },
+      },
+      // {
+      //   path: "Building assets/4buildingRoof/4buildingRoof.gltf",
+      //   setColor: function (obj, color) {
+      //     const newMaterial = new THREE.MeshStandardMaterial();
+      //     newMaterial.color = color;
+      //     obj.children[1].children[0].material = newMaterial;
+      //     obj.children[1].children[1].material = newMaterial;
+      //   },
+      //   fetchObject: function (gltf) {
+      //     return gltf.scene;
+      //   },
+      // },
+      // "Building assets/2 building roof gltf/2buildingroof.gltf",
     ],
   },
 };
@@ -50,10 +120,6 @@ export class gltfLoader {
         (gltf) => {
           console.log("success");
           console.log(gltf);
-
-          if (filePath == "vehicleAssets/minibus gltf/minibus.gltf") {
-            console.log("=======================");
-          }
 
           loaded$.next(gltf);
         },

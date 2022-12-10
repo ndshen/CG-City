@@ -150,11 +150,11 @@ export class CGCity {
 
     const maxBuildingLevel = this.config.maxBuildingLevel;
     const minBuildingLevel = 1;
-    return (
+    return Math.floor(
       ((this.buildingMap[i][j] - this.config.buildingThreshold) /
         (1 - this.config.buildingThreshold)) *
         (maxBuildingLevel - minBuildingLevel) +
-      minBuildingLevel
+        minBuildingLevel
     );
   }
 
@@ -162,8 +162,9 @@ export class CGCity {
     this.buildingGeneratror
       .generateRandomBuilding(level)
       .subscribe((building) => {
-        const box = new THREE.Box3().setFromObject(building);
-        const bSize = box.getSize(new THREE.Vector3());
+        const bSize = new THREE.Box3()
+          .setFromObject(building)
+          .getSize(new THREE.Vector3());
         util.reCenterObj(building);
         building.position.add(
           new THREE.Vector3(x, this.config.buildingBaseHeight + bSize.y / 2, z)

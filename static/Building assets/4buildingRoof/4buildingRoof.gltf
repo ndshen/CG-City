@@ -1,0 +1,87 @@
+{
+  "asset": { "version": "2.0", "generator": "VECTARY" },
+  "nodes": [
+    {
+      "translation": [
+        4.431384143728662e-19, -6.661338147750939e-19, 0.0036184997558593745
+      ],
+      "scale": [0.001, 0.001, 0.001],
+      "rotation": [
+        4.329780281177466e-17, 0.7071067811865475, 0.7071067811865476,
+        -4.329780281177467e-17
+      ],
+      "name": "Roof",
+      "mesh": 0
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.39929329990267437, 0.39929329990267437, 0.39929329990267437, 1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "name": "Roof",
+      "emissiveFactor": [0, 0, 0],
+      "extensions": {},
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "mode": 4,
+          "attributes": { "POSITION": 1, "NORMAL": 2, "TEXCOORD_0": 3 },
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 462,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 202,
+      "max": [30, 22, 91],
+      "min": [-30, -32, 80],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 202,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 202,
+      "type": "VEC2"
+    }
+  ],
+  "bufferViews": [
+    { "buffer": 0, "byteOffset": 0, "byteLength": 1848, "target": 34963 },
+    { "buffer": 0, "byteOffset": 1848, "byteLength": 2424, "target": 34962 },
+    { "buffer": 0, "byteOffset": 4272, "byteLength": 2424, "target": 34962 },
+    { "buffer": 0, "byteOffset": 6696, "byteLength": 1616, "target": 34962 }
+  ],
+  "scene": 0,
+  "scenes": [{ "nodes": [0], "name": "Project Name" }],
+  "extensionsUsed": ["KHR_texture_transform"],
+  "buffers": [{ "byteLength": 8312, "uri": "CG-CityAssets.bin" }]
+}
