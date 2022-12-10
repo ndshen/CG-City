@@ -98,17 +98,15 @@ export class CGBuildingGenerator {
     const buildingColor = getRandomElement(MULTI_LEVEL_BUILDING_COLORS);
 
     // base
-    resizeObject(
+    this.resizeAndRecenter(
       base,
       this.buildingComponentWidth,
       this.buildingComponentWidth,
       this.config.buildingLevelHeight
     );
-    const baseSize = new THREE.Box3()
-      .setFromObject(base)
-      .getSize(new THREE.Vector3());
-    reCenterObj(base);
-    base.position.add(new THREE.Vector3(0, baseSize.y / 2, 0));
+    base.position.add(
+      new THREE.Vector3(0, this.config.buildingLevelHeight * 0.5, 0)
+    );
     setModelColor(baseConfig, base, buildingColor);
     building.add(base);
 
@@ -116,51 +114,42 @@ export class CGBuildingGenerator {
     const bodyNum = level - 1;
     for (let i = 0; i < bodyNum; i++) {
       const b = originBody.clone();
-      resizeObject(
+      this.resizeAndRecenter(
         b,
         this.buildingComponentWidth,
         this.buildingComponentWidth,
         this.config.buildingLevelHeight
       );
-      reCenterObj(b);
       b.position.add(
-        new THREE.Vector3(
-          0,
-          baseSize.y +
-            i * this.config.buildingLevelHeight +
-            this.config.buildingLevelHeight / 2,
-          0
-        )
+        new THREE.Vector3(0, (i + 1 + 0.5) * this.config.buildingLevelHeight, 0)
       );
       setModelColor(bodyConfig, b, buildingColor);
       building.add(b);
     }
 
     if (Math.random() > this.config.buildingRoofProb) {
+      reCenterObj(building);
       return building;
     }
 
     // roof
-    resizeObject(
+    this.resizeAndRecenter(
       roof,
       this.buildingComponentWidth,
       this.buildingComponentWidth,
       this.config.buildingLevelHeight
     );
-    const roofSize = new THREE.Box3()
-      .setFromObject(base)
-      .getSize(new THREE.Vector3());
-    reCenterObj(roof);
     roof.position.add(
       new THREE.Vector3(
         0,
-        baseSize.y + this.config.buildingLevelHeight * bodyNum + roofSize.y / 2,
+        this.config.buildingLevelHeight * (bodyNum + 1 + 0.5),
         0
       )
     );
     setModelColor(roofConfig, roof, buildingColor);
     building.add(roof);
 
+    reCenterObj(building);
     return building;
   };
 
