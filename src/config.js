@@ -25,6 +25,7 @@ export const cityConfig = {
   maxBuildingLevel: 10,
   buildingLevelHeight: 10,
   buildingPadding: 2,
+  buildingRoofProb: 0.3,
 };
 
 export function cityWidth() {
