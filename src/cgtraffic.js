@@ -243,7 +243,16 @@ export class CGTraffic {
       Math.max(originSize.x, originSize.z, originSize.y) * 0.05 * roadWidth;
     for (let i = 0; i < this.count; i++) {
       if (i < this.allStartPts.length) {
+        car.children[10].material = new THREE.MeshBasicMaterial({ color:  0x000000});
         const c = car.clone();
+        if (Math.random() < 0.25)
+          c.children[10].material.color.setHex(0x1ffe01);
+        else if (Math.random() < 0.5)
+          c.children[10].material.color.setHex(0x6361ac);
+        else if (Math.random() < 0.75)
+          c.children[10].material.color.setHex(0xbf8523);
+        else 
+          c.children[10].material.color.setHex(0xebead9);
         this.onSmallCarLoad(c, originSize);
       }
     }
