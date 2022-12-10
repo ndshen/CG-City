@@ -10,7 +10,7 @@ export const cityConfig = {
 
   origin: [0, 0, 0],
 
-  gridSize: 13,
+  gridSize: 8,
   roadWidth: 25,
   blockWidth: 25,
 
@@ -26,3 +26,14 @@ export const cityConfig = {
   buildingLevelHeight: 10,
   buildingPadding: 2,
 };
+
+export function cityWidth() {
+  return (
+    cityConfig.gridSize * cityConfig.blockWidth +
+    (cityConfig.gridSize - 1) * cityConfig.roadWidth
+  );
+}
+
+export function cityRadius() {
+  return cityWidth() / 2;
+}

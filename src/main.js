@@ -3,7 +3,7 @@ import * as THREE from "three";
 import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CGCity } from "./city.js";
-import { cityConfig } from "./config.js";
+import { cityConfig, cityWidth, cityRadius } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
 import { CGSky } from "./cgsky.js";
@@ -19,7 +19,7 @@ let renderer;
 let camera;
 let firstPersonControls;
 let orbitControls;
-let city;
+let cities = [];
 let weather;
 let sky;
 let traffic;
@@ -49,18 +49,30 @@ function generateRenderer() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function generateCity() {
-  city = new CGCity(scene, cityConfig, new gltfLoader(), gltfAssetPath);
-  city.generateCity();
+function generateCity(origin = [0, 0]) {
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      let cityBlockConfig = JSON.parse(JSON.stringify(cityConfig));
+      cityBlockConfig.origin[0] += i * cityWidth();
+      cityBlockConfig.origin[2] += j * cityWidth();
+      cities.push(
+        new CGCity(scene, cityBlockConfig, new gltfLoader(), gltfAssetPath)
+      );
+    }
+  }
+
+  cities.forEach((cityBlock) => {
+    cityBlock.generateCity();
+  });
 }
 
 function generateWeather() {
-  weather = new CGWeather(scene, cityConfig, city.cityWidth, 300, 20000);
+  weather = new CGWeather(scene, cityConfig, cityWidth(), 300, 20000);
   //weather.generateWeather();
 }
 
 function generateSky() {
-  sky = new CGSky(scene, cityConfig);
+  sky = new CGSky(scene);
 }
 
 const parameters = {
@@ -83,7 +95,7 @@ function generateTrafficSystem() {
     cityConfig,
     new gltfLoader(),
     gltfAssetPath,
-    city.cityWidth
+    cityWidth()
   );
   traffic.init();
   traffic.generateTraffic();
@@ -105,13 +117,13 @@ function generateLighting() {
   let sunLightColor = 0xffffff;
   let sunLightIntensity = 0.8;
   let sunLight = new THREE.DirectionalLight(sunLightColor, sunLightIntensity);
-  let sunLight_x = city.cityWidth / 4;
+  let sunLight_x = cityWidth() / 4;
   let sunLight_y = 600;
-  let sunLight_z = city.cityWidth / 2;
+  let sunLight_z = cityWidth() / 2;
 
   sunLight.position.set(sunLight_x, sunLight_y, sunLight_z);
   sunLight.target.position.set(0, 0, 0);
-  sunLight.castShadow = true;
+  sunLight.castShadow = false;
 
   // Set the shadow camera properties
   sunLight.shadow.camera.near = 200;
@@ -164,7 +176,6 @@ function generateControls() {
   firstPersonControls = new CGFirstPersonControls(
     camera,
     canvas,
-    cityConfig,
     onFirstPersonEnabled,
     onFirstPersonDisabled
   );
@@ -201,6 +212,16 @@ function onKeyDown(event) {
     case "z":
       firstPersonControls.enable();
       break;
+    case "x":
+      cities.forEach((cityBlock) => {
+        cityBlock.hideCity();
+      });
+      break;
+    case "c":
+      cities.forEach((cityBlock) => {
+        cityBlock.showCity();
+      });
+      break;
   }
 }
 
@@ -211,8 +232,10 @@ function onKeyUp(event) {
 function generateEventListener() {
   window.addEventListener("resize", resize);
   window.addEventListener("dblclick", () => {
-    city.destroyCity();
-    city.generateCity();
+    cities.forEach((cityBlock) => {
+      cityBlock.destroyCity();
+      cityBlock.generateCity();
+    });
     traffic.destoryTraffic();
     traffic.init();
     traffic.generateTraffic();
@@ -251,8 +274,16 @@ const tick = () => {
   }
   window.requestAnimationFrame(tick);
 
+  // Update camera position
   if (firstPersonControls.isEnabled()) {
     firstPersonControls.updatePosition(keyDict, elapsedTime);
+
+    if (Math.abs(camera.position.x) > cityRadius()) {
+      camera.position.x = -Math.sign(camera.position.x) * (cityRadius() - 1);
+    }
+    if (Math.abs(camera.position.z) > cityRadius()) {
+      camera.position.z = -Math.sign(camera.position.z) * (cityRadius() - 1);
+    }
   }
 };
 

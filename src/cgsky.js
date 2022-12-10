@@ -1,9 +1,9 @@
 import * as THREE from "three";
+import { cityWidth } from "./config.js";
 
 export class CGSky {
-  constructor(scene, config) {
+  constructor(scene) {
     this.scene = scene;
-    this.config = config;
 
     this.skyLoaded = false;
     this.skyType = -1;
@@ -19,10 +19,7 @@ export class CGSky {
 
   showSky() {
     if (!this.skyGeometry) {
-      let cityWidth =
-        this.config.gridSize * this.config.blockWidth +
-        (this.config.gridSize - 1) * this.config.roadWidth;
-      this.skyGeometry = new THREE.SphereGeometry(cityWidth * 0.75);
+      this.skyGeometry = new THREE.SphereGeometry(cityWidth() * 0.75 * 3);
     }
 
     let skyTexturePath = "textures/sky/clearSky.png";

@@ -11,7 +11,9 @@ export class CGCity {
     this.assetPath = assetPath;
 
     // stores the uuids of all the objects generated in the city
-    this.allObjects = [];
+    this.objectIds = [];
+    // cache a copy of all objects
+    this.objects = [];
 
     // a gridSize X gridSize 2D array, indicates which blocks are ground and which are buildings
     this.buildingMap = [[]];
@@ -34,8 +36,17 @@ export class CGCity {
   }
 
   destroyCity() {
-    this.allObjects.map(this.removeObject);
-    this.allObjects = [];
+    this.objectIds.map(this.removeObject);
+    this.objectIds = [];
+    this.objects = [];
+  }
+
+  hideCity() {
+    this.objectIds.map(this.removeObject); // remove objects from scene but keep cached copies
+  }
+
+  showCity() {
+    this.objects.map(this.addCachedObject);
   }
 
   removeObject = (objectId) => {
@@ -43,6 +54,10 @@ export class CGCity {
     // object.geometry.dispose();
     // object.material.dispose();
     this.scene.remove(object);
+  };
+
+  addCachedObject = (object) => {
+    this.scene.add(object);
   };
 
   generateBuildingMap(noiseSeedFn, noiseValueFn) {
@@ -72,7 +87,8 @@ export class CGCity {
     object.position.add(new THREE.Vector3().fromArray(this.config.origin));
     object.castShadow = true;
     object.receiveShadow = true;
-    this.allObjects.push(object.uuid);
+    this.objectIds.push(object.uuid);
+    this.objects.push(object);
     this.scene.add(object);
   }
 
