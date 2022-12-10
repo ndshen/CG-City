@@ -18,7 +18,7 @@ export const gltfAssetPath = {
     BODY: [
       "Building assets/1 building body gltf/1buildingbody.gltf",
       "Building assets/2 building body gltf/2buildingbody2.gltf",
-      //"Building assets/3 building body gltf/3buildingbody.gltf",
+      "Building assets/3 building body gltf/3buildingbody.gltf",
     ],
     ROOF: [
       "Building assets/1 building roof gltf/1buildingroof.gltf",
@@ -50,6 +50,10 @@ export class gltfLoader {
         (gltf) => {
           console.log("success");
           console.log(gltf);
+
+          if (filePath == "vehicleAssets/minibus gltf/minibus.gltf") {
+            console.log("=======================");
+          }
 
           loaded$.next(gltf);
         },
