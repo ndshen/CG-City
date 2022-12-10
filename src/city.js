@@ -165,7 +165,6 @@ export class CGCity {
         const bSize = new THREE.Box3()
           .setFromObject(building)
           .getSize(new THREE.Vector3());
-        util.reCenterObj(building);
         building.position.add(
           new THREE.Vector3(x, this.config.buildingBaseHeight + bSize.y / 2, z)
         );
