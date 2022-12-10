@@ -9,7 +9,6 @@ export class CGTraffic {
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
 
-    this.allCarObjectIds = [];
     this.allCarObjects = [];
     this.movingDirs = [];
     this.allStartPts = [];
@@ -35,7 +34,10 @@ export class CGTraffic {
   }
 
   init() {
-    this.count = Math.min(100, (this.config.gridSize - 1) * (this.config.gridSize - 1));
+    this.count = Math.min(
+      100,
+      (this.config.gridSize - 1) * (this.config.gridSize - 1)
+    );
     this.gen = false;
     this.ryg = [0xff0000, 0xffff00, 0x00ff00];
 
@@ -211,7 +213,7 @@ export class CGTraffic {
     return sphere;
   }
 
-  generateTraffic(mode) {
+  generateTraffic() {
     this.generateTrafficLights();
     this.modelLoader
       .load(this.assetPath.SMALL_CAR)
@@ -243,7 +245,9 @@ export class CGTraffic {
       Math.max(originSize.x, originSize.z, originSize.y) * 0.05 * roadWidth;
     for (let i = 0; i < this.count; i++) {
       if (i < this.allStartPts.length) {
-        car.children[10].material = new THREE.MeshBasicMaterial({ color:  0x000000});
+        car.children[10].material = new THREE.MeshBasicMaterial({
+          color: 0x000000,
+        });
         const c = car.clone();
         if (Math.random() < 0.25)
           c.children[10].material.color.setHex(0x1ffe01);
@@ -251,8 +255,7 @@ export class CGTraffic {
           c.children[10].material.color.setHex(0x6361ac);
         else if (Math.random() < 0.75)
           c.children[10].material.color.setHex(0xbf8523);
-        else 
-          c.children[10].material.color.setHex(0xebead9);
+        else c.children[10].material.color.setHex(0xebead9);
         this.onSmallCarLoad(c, originSize);
       }
     }
@@ -340,17 +343,27 @@ export class CGTraffic {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return i * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
+    return (
+      i * (blockWidth + roadWidth) +
+      blockWidth / 2 -
+      this.cityWidth / 2 -
+      roadWidth / 2
+    );
   }
 
   getBlockZCoordinate(j) {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return j * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
+    return (
+      j * (blockWidth + roadWidth) +
+      blockWidth / 2 -
+      this.cityWidth / 2 -
+      roadWidth / 2
+    );
   }
 
-  destoryTraffic() {
+  destroyTraffic() {
     if (this.gen) {
       this.gen = false;
       for (let i = 0; i < this.count; i++) {
@@ -373,7 +386,6 @@ export class CGTraffic {
       }
     }
     this.gen = false;
-    this.allCarObjectIds = [];
     this.allCarObjects = [];
     this.movingDirs = [];
     this.allStartPts = [];
@@ -390,7 +402,6 @@ export class CGTraffic {
   }
 
   addToScene(object) {
-    this.allCarObjectIds.push(object.uuid);
     this.allCarObjects.push(object);
     this.scene.add(object);
   }
@@ -488,9 +499,12 @@ export class CGTraffic {
         const curBlock = this.isBlock[Math.ceil(x + this.cityWidth * 0.5)];
         const nextBlock =
           this.isBlock[Math.ceil(x + this.speeds[i] + this.cityWidth * 0.5)];
-        const curLights = this.trafficLights[
-          this.isBlock[Math.ceil(z + this.cityWidth * 0.5 - this.config.roadWidth)]
-        ]
+        const curLights =
+          this.trafficLights[
+            this.isBlock[
+              Math.ceil(z + this.cityWidth * 0.5 - this.config.roadWidth)
+            ]
+          ];
         if (
           !(
             curBlock < 0 ||
@@ -530,9 +544,12 @@ export class CGTraffic {
               x - this.speeds[i] + this.cityWidth * 0.5 - this.maxCarSize * 1.2
             )
           ];
-        const curLights = this.trafficLights[
-          this.isBlock[Math.ceil(z + this.cityWidth * 0.5 - this.config.roadWidth)]
-        ]
+        const curLights =
+          this.trafficLights[
+            this.isBlock[
+              Math.ceil(z + this.cityWidth * 0.5 - this.config.roadWidth)
+            ]
+          ];
         if (
           !(
             curBlock <= 0 ||
@@ -568,7 +585,11 @@ export class CGTraffic {
             this.allCarObjects[j].position.z - this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], this.allCarObjects[j].position.z - z);
+            this.speeds[i] = Math.min(
+              0.8 * this.speeds[j],
+              this.speeds[i],
+              this.allCarObjects[j].position.z - z
+            );
           }
         }
       } else if (this.movingDirs[i] == 1) {
@@ -588,7 +609,11 @@ export class CGTraffic {
             this.allCarObjects[j].position.x - this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], this.allCarObjects[j].position.x - x);
+            this.speeds[i] = Math.min(
+              0.8 * this.speeds[j],
+              this.speeds[i],
+              this.allCarObjects[j].position.x - x
+            );
           }
         }
       } else if (this.movingDirs[i] == 2) {
@@ -608,7 +633,11 @@ export class CGTraffic {
             this.allCarObjects[j].position.z + this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], z - this.allCarObjects[j].position.z);
+            this.speeds[i] = Math.min(
+              0.8 * this.speeds[j],
+              this.speeds[i],
+              z - this.allCarObjects[j].position.z
+            );
           }
         }
       } else if (this.movingDirs[i] == 3) {
@@ -628,7 +657,11 @@ export class CGTraffic {
             this.allCarObjects[j].position.x + this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], x - this.allCarObjects[j].position.x);
+            this.speeds[i] = Math.min(
+              0.8 * this.speeds[j],
+              this.speeds[i],
+              x - this.allCarObjects[j].position.x
+            );
           }
         }
       }

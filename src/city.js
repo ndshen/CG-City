@@ -10,9 +10,7 @@ export class CGCity {
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
 
-    // stores the uuids of all the objects generated in the city
-    this.objectIds = [];
-    // cache a copy of all objects
+    // cache a copy of all objects (allows for much faster loading/reloading)
     this.objects = [];
 
     // a gridSize X gridSize 2D array, indicates which blocks are ground and which are buildings
@@ -36,27 +34,23 @@ export class CGCity {
   }
 
   destroyCity() {
-    this.objectIds.map(this.removeObject);
-    this.objectIds = [];
+    this.objects.map(this.removeObject);
     this.objects = [];
   }
 
   hideCity() {
-    this.objectIds.map(this.removeObject); // remove objects from scene but keep cached copies
+    this.objects.map(this.removeObject); // remove objects from scene but keep cached copies
   }
 
   showCity() {
-    this.objects.map(this.addCachedObject);
+    this.objects.map(this.addObject);
   }
 
-  removeObject = (objectId) => {
-    const object = this.scene.getObjectByProperty("uuid", objectId);
-    // object.geometry.dispose();
-    // object.material.dispose();
+  removeObject = (object) => {
     this.scene.remove(object);
   };
 
-  addCachedObject = (object) => {
+  addObject = (object) => {
     this.scene.add(object);
   };
 
@@ -87,7 +81,6 @@ export class CGCity {
     object.position.add(new THREE.Vector3().fromArray(this.config.origin));
     object.castShadow = true;
     object.receiveShadow = true;
-    this.objectIds.push(object.uuid);
     this.objects.push(object);
     this.scene.add(object);
   }
@@ -220,7 +213,7 @@ export class CGCity {
         const blockX = this.getBlockXCoordinate(i);
         const blockZ = this.getBlockZCoordinate(j);
 
-        if (j < gridSize - 1) {
+        if (j < gridSize) {
           const roadCol = road.clone();
           roadCol.position.set(
             blockX,
@@ -231,7 +224,7 @@ export class CGCity {
           this.addToScene(roadCol);
         }
 
-        if (i < gridSize - 1) {
+        if (i < gridSize) {
           let roadRow = road.clone();
           roadRow.rotation.z += Math.PI / 2;
           roadRow.position.set(
@@ -255,8 +248,8 @@ export class CGCity {
     let crossRoad = obj;
     util.resizeObject(crossRoad, roadWidth, roadWidth, roadHeight);
 
-    for (let i = 0; i < gridSize - 1; i++) {
-      for (let j = 0; j < gridSize - 1; j++) {
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
         const blockX = this.getBlockXCoordinate(i);
         const blockZ = this.getBlockZCoordinate(j);
 
@@ -284,7 +277,7 @@ export class CGCity {
   get cityWidth() {
     return (
       this.config.gridSize * this.config.blockWidth +
-      (this.config.gridSize - 1) * this.config.roadWidth
+      this.config.gridSize * this.config.roadWidth
     );
   }
 }

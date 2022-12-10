@@ -53,8 +53,8 @@ function generateCity(origin = [0, 0]) {
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       let cityBlockConfig = JSON.parse(JSON.stringify(cityConfig));
-      cityBlockConfig.origin[0] += i * cityWidth();
-      cityBlockConfig.origin[2] += j * cityWidth();
+      cityBlockConfig.origin[0] += i * (cityWidth() + 100);
+      cityBlockConfig.origin[2] += j * (cityWidth() + 100);
       cities.push(
         new CGCity(scene, cityBlockConfig, new gltfLoader(), gltfAssetPath)
       );
@@ -213,14 +213,16 @@ function onKeyDown(event) {
       firstPersonControls.enable();
       break;
     case "x":
-      cities.forEach((cityBlock) => {
-        cityBlock.hideCity();
-      });
+      // cities.forEach((cityBlock) => {
+      //   cityBlock.hideCity();
+      // });
+      cities[0].hideCity();
       break;
     case "c":
-      cities.forEach((cityBlock) => {
-        cityBlock.showCity();
-      });
+      // cities.forEach((cityBlock) => {
+      //   cityBlock.showCity();
+      // });
+      cities[0].showCity();
       break;
   }
 }
@@ -236,7 +238,7 @@ function generateEventListener() {
       cityBlock.destroyCity();
       cityBlock.generateCity();
     });
-    traffic.destoryTraffic();
+    traffic.destroyTraffic();
     traffic.init();
     traffic.generateTraffic();
   });
@@ -257,18 +259,17 @@ function render() {
   window.requestAnimationFrame(render);
 }
 
-// animation
+// Animation
 const clock = new THREE.Clock();
 let prevTime = 0;
 const tick = () => {
   let elapsedTime = clock.getElapsedTime() - prevTime;
   prevTime = clock.getElapsedTime();
 
-  // Update particles
+  // Update weather
   if (weather && weather.gen) {
     weather.update(0.2);
   }
-  // Update particles
   if (traffic && traffic.gen && traffic.allGenerates()) {
     traffic.update(0.2);
   }
