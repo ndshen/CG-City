@@ -8,7 +8,6 @@ export class CGTraffic {
     this.cityWidth = cityWidth;
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
-    this.count = 100;
 
     this.allCarObjectIds = [];
     this.allCarObjects = [];
@@ -36,6 +35,7 @@ export class CGTraffic {
   }
 
   init() {
+    this.count = Math.min(100, (this.config.gridSize - 1) * (this.config.gridSize - 1));
     this.gen = false;
     this.ryg = [0xff0000, 0xffff00, 0x00ff00];
 
