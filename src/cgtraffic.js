@@ -568,7 +568,7 @@ export class CGTraffic {
             this.allCarObjects[j].position.z - this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i]);
+            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], this.allCarObjects[j].position.z - z);
           }
         }
       } else if (this.movingDirs[i] == 1) {
@@ -588,7 +588,7 @@ export class CGTraffic {
             this.allCarObjects[j].position.x - this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i]);
+            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], this.allCarObjects[j].position.x - x);
           }
         }
       } else if (this.movingDirs[i] == 2) {
@@ -608,7 +608,7 @@ export class CGTraffic {
             this.allCarObjects[j].position.z + this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i]);
+            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], z - this.allCarObjects[j].position.z);
           }
         }
       } else if (this.movingDirs[i] == 3) {
@@ -628,7 +628,7 @@ export class CGTraffic {
             this.allCarObjects[j].position.x + this.maxCarSize * 1.5
           ) {
             // car[i] a little bit slower
-            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i]);
+            this.speeds[i] = Math.min(0.8 * this.speeds[j], this.speeds[i], x - this.allCarObjects[j].position.x);
           }
         }
       }
