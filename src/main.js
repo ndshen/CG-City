@@ -6,7 +6,7 @@ import { CGCity } from "./city.js";
 import { cityConfig } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
-import { CGSky } from "./cgsky.js"
+import { CGSky } from "./cgsky.js";
 import { CGTraffic } from "./cgtraffic.js";
 import { CGFirstPersonControls } from "./cgFirstPersonControls";
 
@@ -43,7 +43,7 @@ function generateScene() {
 }
 
 function generateRenderer() {
-  renderer = new THREE.WebGL1Renderer({ canvas: canvas, antialias: true});
+  renderer = new THREE.WebGL1Renderer({ canvas: canvas, antialias: true });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -64,16 +64,27 @@ function generateSky() {
 }
 
 const parameters = {
-  weather: 2
-}
-gui.add(parameters, 'weather').min(0).max(2).step(1).onChange(() => {
-  weather.destroyWeather();
-  weather.generateWeather(parameters.weather);
-  console.log(parameters.weather);
- })
+  weather: 2,
+};
+gui
+  .add(parameters, "weather")
+  .min(0)
+  .max(2)
+  .step(1)
+  .onChange(() => {
+    weather.destroyWeather();
+    weather.generateWeather(parameters.weather);
+    console.log(parameters.weather);
+  });
 
 function generateTrafficSystem() {
-  traffic = new CGTraffic(scene, cityConfig, new gltfLoader(), gltfAssetPath, city.cityWidth);
+  traffic = new CGTraffic(
+    scene,
+    cityConfig,
+    new gltfLoader(),
+    gltfAssetPath,
+    city.cityWidth
+  );
   traffic.init();
   traffic.generateTraffic();
 }
@@ -93,14 +104,11 @@ function generateLighting() {
   // Create main directional light (used to simulate sunlight)
   let sunLightColor = 0xffffff;
   let sunLightIntensity = 0.8;
-  let sunLight = new THREE.DirectionalLight(
-    sunLightColor,
-    sunLightIntensity
-  );
+  let sunLight = new THREE.DirectionalLight(sunLightColor, sunLightIntensity);
   let sunLight_x = city.cityWidth / 4;
   let sunLight_y = 600;
   let sunLight_z = city.cityWidth / 2;
-  
+
   sunLight.position.set(sunLight_x, sunLight_y, sunLight_z);
   sunLight.target.position.set(0, 0, 0);
   sunLight.castShadow = true;
@@ -108,7 +116,7 @@ function generateLighting() {
   // Set the shadow camera properties
   sunLight.shadow.camera.near = 200;
   sunLight.shadow.camera.far = 1500;
-  let d = 750
+  let d = 750;
   sunLight.shadow.camera.left = -d;
   sunLight.shadow.camera.right = d;
   sunLight.shadow.camera.top = d;
@@ -153,7 +161,13 @@ function generateControls() {
   orbitControls = new OrbitControls(camera, canvas);
   orbitControls.maxPolarAngle = Math.PI / 2;
 
-  firstPersonControls = new CGFirstPersonControls(camera, canvas, cityConfig, onFirstPersonEnabled, onFirstPersonDisabled);
+  firstPersonControls = new CGFirstPersonControls(
+    camera,
+    canvas,
+    cityConfig,
+    onFirstPersonEnabled,
+    onFirstPersonDisabled
+  );
 }
 
 function onFirstPersonEnabled() {
@@ -169,22 +183,22 @@ function onFirstPersonDisabled() {
 // keyboard action
 function onKeyDown(event) {
   keyDict[event.key] = true;
-  switch(event.key) {
-    case '1': 
+  switch (event.key) {
+    case "1":
       weather.destroyWeather();
       weather.generateWeather(0);
       sky.updateSkyType(0);
       break;
-    case '2':
+    case "2":
       weather.destroyWeather();
       weather.generateWeather(1);
       sky.updateSkyType(1);
       break;
-    case '0':
+    case "0":
       weather.destroyWeather();
       sky.updateSkyType(-1);
       break;
-    case 'z':
+    case "z":
       firstPersonControls.enable();
       break;
   }
@@ -203,8 +217,8 @@ function generateEventListener() {
     traffic.init();
     traffic.generateTraffic();
   });
-  window.addEventListener('keydown', onKeyDown);
-  window.addEventListener('keyup', onKeyUp)
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
 }
 
 // Function called on window resize events.
@@ -235,12 +249,12 @@ const tick = () => {
   if (traffic && traffic.gen && traffic.allGenerates()) {
     traffic.update(0.2);
   }
-  window.requestAnimationFrame(tick)
+  window.requestAnimationFrame(tick);
 
   if (firstPersonControls.isEnabled()) {
     firstPersonControls.updatePosition(keyDict, elapsedTime);
   }
-}
+};
 
 init();
 render();
