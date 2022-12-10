@@ -488,7 +488,9 @@ export class CGTraffic {
         const curBlock = this.isBlock[Math.ceil(x + this.cityWidth * 0.5)];
         const nextBlock =
           this.isBlock[Math.ceil(x + this.speeds[i] + this.cityWidth * 0.5)];
-        const curLights = this.trafficLights[curBlock];
+        const curLights = this.trafficLights[
+          this.isBlock[Math.ceil(z + this.cityWidth * 0.5 - this.config.roadWidth)]
+        ]
         if (
           !(
             curBlock < 0 ||
@@ -528,7 +530,9 @@ export class CGTraffic {
               x - this.speeds[i] + this.cityWidth * 0.5 - this.maxCarSize * 1.2
             )
           ];
-        const curLights = this.trafficLights[curBlock - 1];
+        const curLights = this.trafficLights[
+          this.isBlock[Math.ceil(z + this.cityWidth * 0.5 - this.config.roadWidth)]
+        ]
         if (
           !(
             curBlock <= 0 ||
