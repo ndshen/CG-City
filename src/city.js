@@ -90,10 +90,10 @@ export class CGCity {
     this.buildingMap = util.normalize2DArray(this.buildingMap);
   }
 
-  addToScene(object) {
+  addToScene(object, castShadow = false, receiveShadow = false) {
     object.position.add(new THREE.Vector3().fromArray(this.config.origin));
-    object.castShadow = true;
-    object.receiveShadow = true;
+    object.castShadow = castShadow;
+    object.receiveShadow = receiveShadow;
     this.allObjects.push(object.uuid);
     this.objects.push(object);
     this.scene.add(object);
@@ -147,7 +147,7 @@ export class CGCity {
     });
     const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
     baseMesh.position.set(x, baseHeight / 2, z);
-    this.addToScene(baseMesh);
+    this.addToScene(baseMesh, false, true);
   }
 
   generateGroundBase(x, z) {
@@ -163,7 +163,7 @@ export class CGCity {
     });
     const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
     baseMesh.position.set(x, baseHeight / 2, z);
-    this.addToScene(baseMesh);
+    this.addToScene(baseMesh, false, true);
   }
 
   getBuildingLevel(i, j) {
@@ -191,7 +191,7 @@ export class CGCity {
         building.position.add(
           new THREE.Vector3(x, this.config.buildingBaseHeight + bSize.y / 2, z)
         );
-        this.addToScene(building);
+        this.addToScene(building, true, true);
       });
   }
 
@@ -235,7 +235,7 @@ export class CGCity {
             blockZ + (blockWidth + roadWidth) / 2
           );
 
-          this.addToScene(roadCol);
+          this.addToScene(roadCol, false, true);
         }
 
         if (i < gridSize) {
@@ -247,7 +247,7 @@ export class CGCity {
             blockZ
           );
 
-          this.addToScene(roadRow);
+          this.addToScene(roadRow, false, true);
         }
       }
     }

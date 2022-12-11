@@ -19,7 +19,12 @@ export class CGSky {
 
   showSky() {
     if (!this.skyGeometry) {
-      this.skyGeometry = new THREE.SphereGeometry(cityWidth() * 0.75 * 3);
+      //this.skyGeometry = new THREE.SphereGeometry(cityWidth() * 0.75 * 3);
+      this.skyGeometry = new THREE.BoxGeometry(
+        cityWidth() * 2,
+        300,
+        cityWidth() * 2
+      );
     }
 
     let skyTexturePath = "textures/sky/clearSky.png";

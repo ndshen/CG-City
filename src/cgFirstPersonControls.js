@@ -36,12 +36,12 @@ export class CGFirstPersonControls {
   }
 
   onLock() {
-    this.camera.position.x = 15;
+    this.camera.position.x = 0;
     this.camera.position.y = this.minHeight;
-    this.camera.position.z = 15;
-    this.camera.far = cityWidth() * 1.5 * 3;
+    this.camera.position.z = 0;
+    this.camera.far = cityWidth() * 3;
     this.camera.updateProjectionMatrix();
-    this.camera.lookAt(new THREE.Vector3(15, this.minHeight, 0));
+    this.camera.lookAt(new THREE.Vector3(-15, this.minHeight, -5));
 
     this.lockCallback();
   }
