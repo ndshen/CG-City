@@ -12,10 +12,10 @@ export class CGFirstPersonControls {
     this.pointerLockControls.enabled = false;
 
     this.minHeight = cityConfig.groundBaseHeight + cityConfig.roadHeight + 3;
-    this.movementSpeed = 80;
+    this.movementSpeed = 30;
     this.upwardsVelocity = 0;
     this.jumpSpeed = 30;
-    this.gravity = 2.5;
+    this.gravity = 100;
 
     this.pointerLockControls.addEventListener("lock", () => {
       this.onLock();
@@ -88,7 +88,7 @@ export class CGFirstPersonControls {
     }
 
     if (this.camera.position != this.minHeight) {
-      this.upwardsVelocity -= this.gravity;
+      this.upwardsVelocity -= this.gravity * deltaTimeMs;
     }
   }
 }

@@ -343,24 +343,14 @@ export class CGTraffic {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return (
-      i * (blockWidth + roadWidth) +
-      blockWidth / 2 -
-      this.cityWidth / 2 -
-      roadWidth / 2
-    );
+    return i * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
   }
 
   getBlockZCoordinate(j) {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return (
-      j * (blockWidth + roadWidth) +
-      blockWidth / 2 -
-      this.cityWidth / 2 -
-      roadWidth / 2
-    );
+    return j * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
   }
 
   destroyTraffic() {
@@ -402,6 +392,7 @@ export class CGTraffic {
   }
 
   addToScene(object) {
+    object.receiveShadow = true;
     this.allCarObjects.push(object);
     this.scene.add(object);
   }

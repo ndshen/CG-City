@@ -31,7 +31,7 @@ export const cityConfig = {
 export function cityWidth() {
   return (
     cityConfig.gridSize * cityConfig.blockWidth +
-    (cityConfig.gridSize - 1) * cityConfig.roadWidth
+    cityConfig.gridSize * cityConfig.roadWidth
   );
 }
 

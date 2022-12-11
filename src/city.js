@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as util from "./util.js";
 import * as perlin from "./perlin";
 import { CGBuildingGenerator } from "./building.js";
+import { cityWidth } from "./config";
 
 export class CGCity {
   constructor(scene, config, modelLoader, assetPath) {
@@ -10,13 +11,15 @@ export class CGCity {
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
 
-    // cache a copy of all objects (allows for much faster loading/reloading)
+    // stores the uuids of all the objects generated in the city
+    this.allObjects = [];
+    // cache a copy of all objects
     this.objects = [];
 
     // a gridSize X gridSize 2D array, indicates which blocks are ground and which are buildings
     this.buildingMap = [[]];
 
-    this.buildingGeneratror = new CGBuildingGenerator(
+    this.buildingGenerator = new CGBuildingGenerator(
       config,
       modelLoader,
       assetPath
@@ -34,23 +37,33 @@ export class CGCity {
   }
 
   destroyCity() {
-    this.objects.map(this.removeObject);
+    this.allObjects.map(this.removeObject);
+    this.allObjects = [];
+
+    this.objects.map(this.removeCachedObject);
     this.objects = [];
   }
 
-  hideCity() {
-    this.objects.map(this.removeObject); // remove objects from scene but keep cached copies
-  }
-
-  showCity() {
-    this.objects.map(this.addObject);
-  }
-
-  removeObject = (object) => {
+  removeObject = (objectId) => {
+    const object = this.scene.getObjectByProperty("uuid", objectId);
+    // object.geometry.dispose();
+    // object.material.dispose();
     this.scene.remove(object);
   };
 
-  addObject = (object) => {
+  hideCity() {
+    this.objects.map(this.removeCachedObject); // remove objects from scene but keep cached copies
+  }
+
+  showCity() {
+    this.objects.map(this.addCachedObject);
+  }
+
+  removeCachedObject = (object) => {
+    this.scene.remove(object);
+  };
+
+  addCachedObject = (object) => {
     this.scene.add(object);
   };
 
@@ -81,6 +94,7 @@ export class CGCity {
     object.position.add(new THREE.Vector3().fromArray(this.config.origin));
     object.castShadow = true;
     object.receiveShadow = true;
+    this.allObjects.push(object.uuid);
     this.objects.push(object);
     this.scene.add(object);
   }
@@ -88,9 +102,9 @@ export class CGCity {
   generateCityBase() {
     const baseHeight = this.config.cityBaseHeight;
     const baseGeometry = new THREE.BoxGeometry(
-      this.cityWidth,
+      cityWidth(),
       baseHeight,
-      this.cityWidth
+      cityWidth()
     );
 
     const baseMaterial = new THREE.MeshLambertMaterial({
@@ -110,14 +124,14 @@ export class CGCity {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return i * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
+    return i * (blockWidth + roadWidth) + blockWidth / 2 - cityWidth() / 2;
   }
 
   getBlockZCoordinate(j) {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return j * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
+    return j * (blockWidth + roadWidth) + blockWidth / 2 - cityWidth() / 2;
   }
 
   generateBuildingBase(x, z) {
@@ -168,7 +182,7 @@ export class CGCity {
   }
 
   generateBuilding(x, z, level) {
-    this.buildingGeneratror
+    this.buildingGenerator
       .generateRandomBuilding(level)
       .subscribe((building) => {
         const bSize = new THREE.Box3()
@@ -272,12 +286,5 @@ export class CGCity {
     this.modelLoader
       .load(this.assetPath.ROAD.CROSS_ROAD)
       .subscribe(this.onCrossRoadLoaded);
-  }
-
-  get cityWidth() {
-    return (
-      this.config.gridSize * this.config.blockWidth +
-      this.config.gridSize * this.config.roadWidth
-    );
   }
 }

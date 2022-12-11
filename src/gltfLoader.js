@@ -118,14 +118,14 @@ export class gltfLoader {
       this.loader.load(
         filePath,
         (gltf) => {
-          console.log("success");
-          console.log(gltf);
+          //console.log("success");
+          //console.log(gltf);
 
           loaded$.next(gltf);
         },
         (progress) => {
-          console.log("progress");
-          console.log(progress);
+          //console.log("progress");
+          //console.log(progress);
         },
         (error) => {
           console.log("error");
