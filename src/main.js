@@ -3,12 +3,14 @@ import * as THREE from "three";
 import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CGCity } from "./city.js";
-import { cityConfig } from "./config.js";
+import { cityConfig, cityWidth, cityRadius } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";
 import { CGSky } from "./cgsky.js";
 import { CGTraffic } from "./cgtraffic.js";
 import { CGFirstPersonControls } from "./cgFirstPersonControls";
+import { CGCityCopy } from "./cgcitycopy";
+import { CGTrafficCopy } from "./cgtrafficcopy";
 
 const gui = new dat.GUI();
 
@@ -20,9 +22,11 @@ let camera;
 let firstPersonControls;
 let orbitControls;
 let city;
+let cityCopies = [];
 let weather;
 let sky;
 let traffic;
+let trafficCopies = [];
 let keyDict = {};
 
 function init() {
@@ -55,12 +59,11 @@ function generateCity() {
 }
 
 function generateWeather() {
-  weather = new CGWeather(scene, cityConfig, city.cityWidth, 300, 20000);
-  //weather.generateWeather();
+  weather = new CGWeather(scene, cityConfig, cityWidth() * 2, 300, 20000);
 }
 
 function generateSky() {
-  sky = new CGSky(scene, cityConfig);
+  sky = new CGSky(scene);
 }
 
 const parameters = {
@@ -78,12 +81,14 @@ gui
   });
 
 function generateTrafficSystem() {
+  let trafficConfig = JSON.parse(JSON.stringify(cityConfig));
+  trafficConfig.gridSize = cityConfig.gridSize * 3;
   traffic = new CGTraffic(
     scene,
     cityConfig,
     new gltfLoader(),
     gltfAssetPath,
-    city.cityWidth
+    cityWidth()
   );
   traffic.init();
   traffic.generateTraffic();
@@ -93,7 +98,7 @@ function generateLighting() {
   // Create hemisphere light (used for ambient lighting)
   let skyColor = 0xffffff;
   let groundColor = 0xffffff;
-  let colorIntensity = 0.4;
+  let colorIntensity = 0.3;
   let hemisphereLight = new THREE.HemisphereLight(
     skyColor,
     groundColor,
@@ -103,11 +108,11 @@ function generateLighting() {
 
   // Create main directional light (used to simulate sunlight)
   let sunLightColor = 0xffffff;
-  let sunLightIntensity = 0.8;
+  let sunLightIntensity = 1;
   let sunLight = new THREE.DirectionalLight(sunLightColor, sunLightIntensity);
-  let sunLight_x = city.cityWidth / 4;
-  let sunLight_y = 600;
-  let sunLight_z = city.cityWidth / 2;
+  let sunLight_x = cityWidth() / 2;
+  let sunLight_y = 500;
+  let sunLight_z = cityWidth();
 
   sunLight.position.set(sunLight_x, sunLight_y, sunLight_z);
   sunLight.target.position.set(0, 0, 0);
@@ -116,7 +121,7 @@ function generateLighting() {
   // Set the shadow camera properties
   sunLight.shadow.camera.near = 200;
   sunLight.shadow.camera.far = 1500;
-  let d = 750;
+  let d = cityWidth() * 3;
   sunLight.shadow.camera.left = -d;
   sunLight.shadow.camera.right = d;
   sunLight.shadow.camera.top = d;
@@ -164,18 +169,19 @@ function generateControls() {
   firstPersonControls = new CGFirstPersonControls(
     camera,
     canvas,
-    cityConfig,
     onFirstPersonEnabled,
     onFirstPersonDisabled
   );
 }
 
 function onFirstPersonEnabled() {
+  generateCopies();
   sky.showSky();
   orbitControls.enabled = false;
 }
 
 function onFirstPersonDisabled() {
+  hideCopies();
   sky.hideSky();
   orbitControls.enabled = true;
 }
@@ -201,6 +207,12 @@ function onKeyDown(event) {
     case "z":
       firstPersonControls.enable();
       break;
+    case "x":
+      generateCopies();
+      break;
+    case "c":
+      hideCopies();
+      break;
   }
 }
 
@@ -213,7 +225,7 @@ function generateEventListener() {
   window.addEventListener("dblclick", () => {
     city.destroyCity();
     city.generateCity();
-    traffic.destoryTraffic();
+    traffic.destroyTraffic();
     traffic.init();
     traffic.generateTraffic();
   });
@@ -234,25 +246,72 @@ function render() {
   window.requestAnimationFrame(render);
 }
 
-// animation
+function generateCopies() {
+  if (cityCopies.length == 0 || trafficCopies.length == 0) {
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i == 0 && j == 0) {
+          continue;
+        }
+        cityCopies.push(
+          new CGCityCopy(scene, city, i * cityWidth(), j * cityWidth())
+        );
+        trafficCopies.push(
+          new CGTrafficCopy(scene, traffic, i * cityWidth(), j * cityWidth())
+        );
+      }
+    }
+  }
+
+  cityCopies.forEach((cityCopy) => {
+    cityCopy.showCity();
+  });
+  trafficCopies.forEach((trafficCopy) => {
+    trafficCopy.showTraffic();
+  });
+}
+
+function hideCopies() {
+  cityCopies.forEach((cityCopy) => {
+    cityCopy.hideCity();
+  });
+  trafficCopies.forEach((trafficCopy) => {
+    trafficCopy.hideTraffic();
+  });
+}
+
+// Animation
 const clock = new THREE.Clock();
 let prevTime = 0;
 const tick = () => {
   let elapsedTime = clock.getElapsedTime() - prevTime;
   prevTime = clock.getElapsedTime();
 
-  // Update particles
+  // Update weather
   if (weather && weather.gen) {
     weather.update(0.2);
   }
-  // Update particles
+
+  // Update traffic
   if (traffic && traffic.gen && traffic.allGenerates()) {
     traffic.update(0.2);
   }
+  trafficCopies.forEach((trafficCopy) => {
+    trafficCopy.updateTraffic();
+  });
+
   window.requestAnimationFrame(tick);
 
+  // Update camera position
   if (firstPersonControls.isEnabled()) {
     firstPersonControls.updatePosition(keyDict, elapsedTime);
+
+    if (Math.abs(camera.position.x) > cityRadius()) {
+      camera.position.x = -Math.sign(camera.position.x) * (cityRadius() - 1);
+    }
+    if (Math.abs(camera.position.z) > cityRadius()) {
+      camera.position.z = -Math.sign(camera.position.z) * (cityRadius() - 1);
+    }
   }
 };
 

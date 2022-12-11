@@ -1,30 +1,21 @@
 import * as THREE from "three";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
+import { cityConfig, cityWidth } from "./config.js";
 
 export class CGFirstPersonControls {
-  constructor(
-    camera,
-    canvas,
-    config,
-    lockCallback = null,
-    unlockCallback = null
-  ) {
+  constructor(camera, canvas, lockCallback = null, unlockCallback = null) {
     this.camera = camera;
-    this.config = config;
     this.lockCallback = lockCallback;
     this.unlockCallback = unlockCallback;
 
     this.pointerLockControls = new PointerLockControls(camera, canvas);
     this.pointerLockControls.enabled = false;
 
-    this.cityWidth =
-      this.config.gridSize * this.config.blockWidth +
-      (this.config.gridSize - 1) * this.config.roadWidth;
-    this.minHeight = this.config.groundBaseHeight + this.config.roadHeight + 3;
-    this.movementSpeed = 8;
+    this.minHeight = cityConfig.groundBaseHeight + cityConfig.roadHeight + 3;
+    this.movementSpeed = 30;
     this.upwardsVelocity = 0;
     this.jumpSpeed = 30;
-    this.gravity = 2.5;
+    this.gravity = 100;
 
     this.pointerLockControls.addEventListener("lock", () => {
       this.onLock();
@@ -45,12 +36,12 @@ export class CGFirstPersonControls {
   }
 
   onLock() {
-    this.camera.position.x = 15;
+    this.camera.position.x = 0;
     this.camera.position.y = this.minHeight;
-    this.camera.position.z = 15;
-    this.camera.far = this.cityWidth * 1.5;
+    this.camera.position.z = 0;
+    this.camera.far = cityWidth() * 3;
     this.camera.updateProjectionMatrix();
-    this.camera.lookAt(new THREE.Vector3(15, this.minHeight, 0));
+    this.camera.lookAt(new THREE.Vector3(-15, this.minHeight, -5));
 
     this.lockCallback();
   }
@@ -97,7 +88,7 @@ export class CGFirstPersonControls {
     }
 
     if (this.camera.position != this.minHeight) {
-      this.upwardsVelocity -= this.gravity;
+      this.upwardsVelocity -= this.gravity * deltaTimeMs;
     }
   }
 }

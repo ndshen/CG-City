@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as util from "./util.js";
 import * as perlin from "./perlin";
 import { CGBuildingGenerator } from "./building.js";
+import { cityWidth } from "./config";
 
 export class CGCity {
   constructor(scene, config, modelLoader, assetPath) {
@@ -12,11 +13,13 @@ export class CGCity {
 
     // stores the uuids of all the objects generated in the city
     this.allObjects = [];
+    // cache a copy of all objects
+    this.objects = [];
 
     // a gridSize X gridSize 2D array, indicates which blocks are ground and which are buildings
     this.buildingMap = [[]];
 
-    this.buildingGeneratror = new CGBuildingGenerator(
+    this.buildingGenerator = new CGBuildingGenerator(
       config,
       modelLoader,
       assetPath
@@ -36,6 +39,9 @@ export class CGCity {
   destroyCity() {
     this.allObjects.map(this.removeObject);
     this.allObjects = [];
+
+    this.objects.map(this.removeCachedObject);
+    this.objects = [];
   }
 
   removeObject = (objectId) => {
@@ -43,6 +49,22 @@ export class CGCity {
     // object.geometry.dispose();
     // object.material.dispose();
     this.scene.remove(object);
+  };
+
+  hideCity() {
+    this.objects.map(this.removeCachedObject); // remove objects from scene but keep cached copies
+  }
+
+  showCity() {
+    this.objects.map(this.addCachedObject);
+  }
+
+  removeCachedObject = (object) => {
+    this.scene.remove(object);
+  };
+
+  addCachedObject = (object) => {
+    this.scene.add(object);
   };
 
   generateBuildingMap(noiseSeedFn, noiseValueFn) {
@@ -68,20 +90,21 @@ export class CGCity {
     this.buildingMap = util.normalize2DArray(this.buildingMap);
   }
 
-  addToScene(object) {
+  addToScene(object, castShadow = false, receiveShadow = false) {
     object.position.add(new THREE.Vector3().fromArray(this.config.origin));
-    object.castShadow = true;
-    object.receiveShadow = true;
+    object.castShadow = castShadow;
+    object.receiveShadow = receiveShadow;
     this.allObjects.push(object.uuid);
+    this.objects.push(object);
     this.scene.add(object);
   }
 
   generateCityBase() {
     const baseHeight = this.config.cityBaseHeight;
     const baseGeometry = new THREE.BoxGeometry(
-      this.cityWidth,
+      cityWidth(),
       baseHeight,
-      this.cityWidth
+      cityWidth()
     );
 
     const baseMaterial = new THREE.MeshLambertMaterial({
@@ -101,14 +124,14 @@ export class CGCity {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return i * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
+    return i * (blockWidth + roadWidth) + blockWidth / 2 - cityWidth() / 2;
   }
 
   getBlockZCoordinate(j) {
     const blockWidth = this.config.blockWidth;
     const roadWidth = this.config.roadWidth;
 
-    return j * (blockWidth + roadWidth) + blockWidth / 2 - this.cityWidth / 2;
+    return j * (blockWidth + roadWidth) + blockWidth / 2 - cityWidth() / 2;
   }
 
   generateBuildingBase(x, z) {
@@ -124,7 +147,7 @@ export class CGCity {
     });
     const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
     baseMesh.position.set(x, baseHeight / 2, z);
-    this.addToScene(baseMesh);
+    this.addToScene(baseMesh, false, true);
   }
 
   generateGroundBase(x, z) {
@@ -140,7 +163,7 @@ export class CGCity {
     });
     const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
     baseMesh.position.set(x, baseHeight / 2, z);
-    this.addToScene(baseMesh);
+    this.addToScene(baseMesh, false, true);
   }
 
   getBuildingLevel(i, j) {
@@ -159,7 +182,7 @@ export class CGCity {
   }
 
   generateBuilding(x, z, level) {
-    this.buildingGeneratror
+    this.buildingGenerator
       .generateRandomBuilding(level)
       .subscribe((building) => {
         const bSize = new THREE.Box3()
@@ -168,7 +191,7 @@ export class CGCity {
         building.position.add(
           new THREE.Vector3(x, this.config.buildingBaseHeight + bSize.y / 2, z)
         );
-        this.addToScene(building);
+        this.addToScene(building, true, true);
       });
   }
 
@@ -204,7 +227,7 @@ export class CGCity {
         const blockX = this.getBlockXCoordinate(i);
         const blockZ = this.getBlockZCoordinate(j);
 
-        if (j < gridSize - 1) {
+        if (j < gridSize) {
           const roadCol = road.clone();
           roadCol.position.set(
             blockX,
@@ -212,10 +235,10 @@ export class CGCity {
             blockZ + (blockWidth + roadWidth) / 2
           );
 
-          this.addToScene(roadCol);
+          this.addToScene(roadCol, false, true);
         }
 
-        if (i < gridSize - 1) {
+        if (i < gridSize) {
           let roadRow = road.clone();
           roadRow.rotation.z += Math.PI / 2;
           roadRow.position.set(
@@ -224,7 +247,7 @@ export class CGCity {
             blockZ
           );
 
-          this.addToScene(roadRow);
+          this.addToScene(roadRow, false, true);
         }
       }
     }
@@ -239,8 +262,8 @@ export class CGCity {
     let crossRoad = obj;
     util.resizeObject(crossRoad, roadWidth, roadWidth, roadHeight);
 
-    for (let i = 0; i < gridSize - 1; i++) {
-      for (let j = 0; j < gridSize - 1; j++) {
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
         const blockX = this.getBlockXCoordinate(i);
         const blockZ = this.getBlockZCoordinate(j);
 
@@ -263,12 +286,5 @@ export class CGCity {
     this.modelLoader
       .load(this.assetPath.ROAD.CROSS_ROAD)
       .subscribe(this.onCrossRoadLoaded);
-  }
-
-  get cityWidth() {
-    return (
-      this.config.gridSize * this.config.blockWidth +
-      (this.config.gridSize - 1) * this.config.roadWidth
-    );
   }
 }
