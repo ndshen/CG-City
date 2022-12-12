@@ -33,7 +33,6 @@ export class CGGroundGenerator {
 
   preprocess = (obj) => {
     let object = obj;
-    console.log(obj.name);
     if (object.name == "Tree_1") {
       object = this.preprocessPark(object);
     } else if (object.name == "Parking_lot_block") {
@@ -60,14 +59,11 @@ export class CGGroundGenerator {
     const parkingLot = obj.clone();
     resizeObject(parkingLot, this.config.blockWidth, this.config.blockWidth, 5);
     reCenterObj(parkingLot);
-
-    console.log(parkingLot);
     return parkingLot;
   };
 
   preprocessChristmasTree = (obj) => {
     const christmasTree = obj.parent.clone();
-    console.log(obj);
     resizeObjectWithYAxisUp(
       christmasTree,
       this.config.blockWidth,
