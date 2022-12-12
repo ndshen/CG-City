@@ -95,6 +95,11 @@ export const gltfAssetPath = {
       // "Building assets/2 building roof gltf/2buildingroof.gltf",
     ],
   },
+  GROUND: {
+    PARKING_LOT: "groundAssets/parking gltf/parking.gltf",
+    PARK: "groundAssets/parkWithTrees/parkWithTrees.gltf",
+    CHRISTMAS_TREE: "groundAssets/christmasTree/christmasTree.gltf",
+  },
 };
 
 export class gltfLoader {

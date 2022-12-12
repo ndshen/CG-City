@@ -3,6 +3,7 @@ import * as util from "./util.js";
 import * as perlin from "./perlin";
 import { CGBuildingGenerator } from "./cgBuildingGenerator.js";
 import { cityWidth } from "./config";
+import { CGGroundGenerator } from "./cgGroundGenerator.js";
 
 export class CGCity {
   constructor(scene, config, modelLoader, assetPath) {
@@ -20,6 +21,12 @@ export class CGCity {
     this.buildingMap = [[]];
 
     this.buildingGenerator = new CGBuildingGenerator(
+      config,
+      modelLoader,
+      assetPath
+    );
+
+    this.groundGenerator = new CGGroundGenerator(
       config,
       modelLoader,
       assetPath
@@ -195,6 +202,18 @@ export class CGCity {
       });
   }
 
+  generateGround(x, z) {
+    this.groundGenerator.generateRandomGround().subscribe((ground) => {
+      const gSize = new THREE.Box3()
+        .setFromObject(ground)
+        .getSize(new THREE.Vector3());
+      ground.position.add(
+        new THREE.Vector3(x, this.config.groundBaseHeight + gSize.y / 2, z)
+      );
+      this.addToScene(ground, true, true);
+    });
+  }
+
   generateBlocks() {
     const gridSize = this.config.gridSize;
     for (let i = 0; i < gridSize; i++) {
@@ -207,7 +226,8 @@ export class CGCity {
           this.generateBuilding(x, z, this.getBuildingLevel(i, j));
         } else {
           // is ground block
-          this.generateGroundBase(x, z);
+          // this.generateGroundBase(x, z);
+          this.generateGround(x, z);
         }
       }
     }
