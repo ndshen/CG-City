@@ -46,6 +46,7 @@ export class CGSky {
     this.skyMaterial = new THREE.MeshBasicMaterial({ map: texture });
     this.skyMaterial.side = THREE.BackSide;
     this.skyMesh = new THREE.Mesh(this.skyGeometry, this.skyMaterial);
+    this.skyMesh.position.add(new THREE.Vector3(0, 150, 0));
 
     this.scene.add(this.skyMesh);
     this.skyLoaded = true;
