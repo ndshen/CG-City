@@ -1,4 +1,4 @@
-import { map, first } from "rxjs";
+import { map, first, shareReplay } from "rxjs";
 import {
   getRandomElement,
   reCenterObj,
@@ -13,12 +13,22 @@ export class CGGroundGenerator {
     this.config = config;
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
+    this.cache = new Map();
   }
 
   generateRandomGround() {
-    return this.modelLoader
-      .load(this.assetPath.GROUND[getRandomElement(GROUND_OPTIONS)])
-      .pipe(map(this.preprocess), first());
+    const randomAsset = getRandomElement(GROUND_OPTIONS);
+    if (!this.cache.has(randomAsset)) {
+      this.cache.set(
+        randomAsset,
+        this.modelLoader.load(this.assetPath.GROUND[randomAsset]).pipe(
+          map(this.preprocess),
+          shareReplay(1),
+          map((obj) => obj.clone())
+        )
+      );
+    }
+    return this.cache.get(randomAsset);
   }
 
   preprocess = (obj) => {
