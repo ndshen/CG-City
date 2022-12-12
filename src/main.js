@@ -2,7 +2,7 @@ import "./style.css";
 import * as THREE from "three";
 import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { CGCity } from "./city.js";
+import { CGCity } from "./cgCity.js";
 import { cityConfig, cityWidth, cityRadius } from "./config.js";
 import { gltfLoader, gltfAssetPath } from "./gltfLoader.js";
 import { CGWeather } from "./cgweather.js";

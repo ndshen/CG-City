@@ -26,6 +26,17 @@ export function resizeObject(object, width, length, height) {
   );
 }
 
+export function resizeObjectWithYAxisUp(object, width, length, height) {
+  object.scale.set(1, 1, 1);
+  const box = new THREE.Box3().setFromObject(object);
+  const originSize = box.getSize(new THREE.Vector3());
+  object.scale.set(
+    width / originSize.x,
+    height / originSize.y,
+    length / originSize.z
+  );
+}
+
 export function getRandomElement(array) {
   if (array.length == 0) {
     return null;

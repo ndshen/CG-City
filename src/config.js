@@ -16,7 +16,7 @@ export const cityConfig = {
 
   cityBaseHeight: 10,
   buildingBaseHeight: 2,
-  groundBaseHeight: 1,
+  groundBaseHeight: 0.5,
   roadHeight: 1,
 
   buildingScatter: 0.7, // range: [0, 1]
