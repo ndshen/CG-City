@@ -81,10 +81,11 @@ export class CGTraffic {
     const originSize = box.max.sub(box.min);
     util.resizeObject(
       tLight,
-      originSize.x * roadWidth * 10,
-      originSize.z * roadWidth * 10,
-      originSize.y * roadWidth * 10
+      originSize.x * roadWidth * 7,
+      originSize.z * roadWidth * 7,
+      originSize.y * roadWidth * 7
     );
+    console.log(originSize.y * roadWidth * 10);
     this.lightHeight = originSize.y * roadWidth * 10;
     let l = tLight.clone();
 
@@ -104,17 +105,17 @@ export class CGTraffic {
         /*
          * Row
          */
-        // red
+        // red 0.65, 
         lightRA.add(
-          this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 0.65 - 3.6, 0.2, 0x808080)
         );
-        // yellow
+        // yellow 1.82
         lightRA.add(
-          this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 1.82 - 3.2, 0.2, 0x808080)
         );
-        // green
+        // green 2.95
         lightRA.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
         );
         lightRA.position.set(
           blockX + blockWidth * 0.7,
@@ -125,15 +126,15 @@ export class CGTraffic {
         let lightRB = group.clone();
         // red
         lightRB.add(
-          this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 0.65 - 3.6, 0.2, 0x808080)
         );
         // yellow
         lightRB.add(
-          this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 1.82 - 3.2, 0.2, 0x808080)
         );
         // green
         lightRB.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
         );
         var axis = new THREE.Vector3(0, 1, 0);
         lightRB.rotateOnAxis(axis, Math.PI);
@@ -154,15 +155,15 @@ export class CGTraffic {
         // red
         let lightCA = group.clone();
         lightCA.add(
-          this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 0.65 - 3.6, 0.2, 0x808080)
         );
         // yellow
         lightCA.add(
-          this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 1.82 - 3.2, 0.2, 0x808080)
         );
         // green
         lightCA.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
         );
         var axis = new THREE.Vector3(0, 1, 0);
         lightCA.rotateOnAxis(axis, -Math.PI / 2);
@@ -175,15 +176,15 @@ export class CGTraffic {
         let lightCB = group.clone();
         // red
         lightCB.add(
-          this.getSphere(-0.1, this.lightHeight - 0.65, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 0.65 - 3.6, 0.2, 0x808080)
         );
         // yellow
         lightCB.add(
-          this.getSphere(-0.1, this.lightHeight - 1.82, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 1.82 - 3.2, 0.2, 0x808080)
         );
         // green
         lightCB.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95, 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
         );
 
         lightCB.rotateOnAxis(axis, Math.PI / 2);
@@ -205,8 +206,9 @@ export class CGTraffic {
   };
 
   getSphere(x, y, z, color) {
+    // 0.52
     let sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.52, 10, 10),
+      new THREE.SphereGeometry(0.2, 5, 5),
       new THREE.MeshBasicMaterial({ color: color })
     );
     sphere.position.set(x, y, z);
