@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as util from "./util.js";
 import * as perlin from "./perlin";
-import { CGBuildingGenerator } from "./building.js";
+import { CGBuildingGenerator } from "./cgBuildingGenerator.js";
 import { cityWidth } from "./config";
 
 export class CGCity {
