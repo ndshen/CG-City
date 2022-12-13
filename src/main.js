@@ -40,6 +40,7 @@ function init() {
   generateLighting();
   generateControls();
   generateEventListener();
+  generateDebugUI();
 }
 
 function generateScene() {
@@ -65,20 +66,6 @@ function generateWeather() {
 function generateSky() {
   sky = new CGSky(scene);
 }
-
-const parameters = {
-  weather: 2,
-};
-gui
-  .add(parameters, "weather")
-  .min(0)
-  .max(2)
-  .step(1)
-  .onChange(() => {
-    weather.destroyWeather();
-    weather.generateWeather(parameters.weather);
-    // console.log(parameters.weather);
-  });
 
 function generateTrafficSystem() {
   let trafficConfig = JSON.parse(JSON.stringify(cityConfig));
@@ -232,6 +219,52 @@ function generateEventListener() {
   });
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
+}
+
+function generateDebugUI() {
+  const parameters = {
+    weather: 2,
+  };
+
+  gui
+    .add(parameters, "weather")
+    .min(0)
+    .max(2)
+    .step(1)
+    .onChange(() => {
+      weather.destroyWeather();
+      weather.generateWeather(parameters.weather);
+      // console.log(parameters.weather);
+    });
+
+  gui
+    .add(cityConfig, "buildingScatter")
+    .min(0.1)
+    .max(0.9)
+    .step(0.1)
+    .onChange(() => {
+      city.destroyCity();
+      city.generateCity();
+    });
+
+  gui
+    .add(cityConfig, "buildingThreshold")
+    .min(0.01)
+    .max(0.99)
+    .step(0.1)
+    .onChange(() => {
+      city.destroyCity();
+      city.generateCity();
+    });
+  gui
+    .add(cityConfig, "maxBuildingLevel")
+    .min(1)
+    .max(20)
+    .step(1)
+    .onChange(() => {
+      city.destroyCity();
+      city.generateCity();
+    });
 }
 
 // Function called on window resize events.
