@@ -8,6 +8,7 @@ export class CGCityCopy {
     this.offsetZ = offsetZ;
 
     this.objects = [];
+    this.hidden = true;
     this.copyCity(city);
   }
 
@@ -34,14 +35,18 @@ export class CGCityCopy {
   }
 
   showCity() {
+    if (!this.hidden) return;
     this.objects.map((object) => {
       this.scene.add(object);
     });
+    this.hidden = false;
   }
 
   hideCity() {
+    if (this.visible) return;
     this.objects.map((object) => {
       this.scene.remove(object);
     }); // remove objects from scene but keep cached copies
+    this.hidden = true;
   }
 }

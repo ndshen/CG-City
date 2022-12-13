@@ -181,7 +181,7 @@ function onFirstPersonEnabled() {
 }
 
 function onFirstPersonDisabled() {
-  hideCopies();
+  hideAllCopies();
   sky.hideSky();
   orbitControls.enabled = true;
 }
@@ -209,9 +209,10 @@ function onKeyDown(event) {
       break;
     case "x":
       generateCopies();
+      showAllCopies();
       break;
     case "c":
-      hideCopies();
+      hideAllCopies();
       break;
   }
 }
@@ -262,7 +263,9 @@ function generateCopies() {
       }
     }
   }
+}
 
+function showAllCopies() {
   cityCopies.forEach((cityCopy) => {
     cityCopy.showCity();
   });
@@ -271,13 +274,31 @@ function generateCopies() {
   });
 }
 
-function hideCopies() {
+function hideAllCopies() {
   cityCopies.forEach((cityCopy) => {
     cityCopy.hideCity();
   });
   trafficCopies.forEach((trafficCopy) => {
     trafficCopy.hideTraffic();
   });
+}
+
+function showNearbyCopies() {
+  let numLoaded = 0;
+  for (let i = 0; i < cityCopies.length; i++) {
+    let distance =
+      Math.abs(camera.position.x - cityCopies[i].offsetX) +
+      Math.abs(camera.position.z - cityCopies[i].offsetZ);
+    if (distance < cityWidth() * 1.5) {
+      cityCopies[i].showCity();
+      trafficCopies[i].showTraffic();
+      numLoaded += 1;
+    } else {
+      cityCopies[i].hideCity();
+      trafficCopies[i].hideTraffic();
+    }
+  }
+  //console.log("number of copies loaded: " + numLoaded);
 }
 
 // Animation
@@ -302,7 +323,7 @@ const tick = () => {
 
   window.requestAnimationFrame(tick);
 
-  // Update camera position
+  // Update camera position and render city copies
   if (firstPersonControls.isEnabled()) {
     firstPersonControls.updatePosition(keyDict, elapsedTime);
 
@@ -312,7 +333,11 @@ const tick = () => {
     if (Math.abs(camera.position.z) > cityRadius()) {
       camera.position.z = -Math.sign(camera.position.z) * (cityRadius() - 1);
     }
+
+    showNearbyCopies();
   }
+
+  //console.log("framerate: " + 1 / elapsedTime);
 };
 
 init();
