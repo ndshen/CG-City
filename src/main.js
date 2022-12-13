@@ -77,7 +77,7 @@ gui
   .onChange(() => {
     weather.destroyWeather();
     weather.generateWeather(parameters.weather);
-    console.log(parameters.weather);
+    // console.log(parameters.weather);
   });
 
 function generateTrafficSystem() {

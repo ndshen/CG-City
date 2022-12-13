@@ -19,8 +19,8 @@ export const cityConfig = {
   groundBaseHeight: 0.5,
   roadHeight: 1,
 
-  buildingScatter: 0.7, // range: [0, 1]
-  buildingThreshold: 0.2, // range: [0, 1], smaller threshold -> more buildings
+  buildingScatter: 0.2, // range: [0, 1]
+  buildingThreshold: 0.1, // range: [0, 1], smaller threshold -> more buildings
 
   maxBuildingLevel: 10,
   buildingLevelHeight: 10,

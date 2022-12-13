@@ -85,7 +85,7 @@ export class CGTraffic {
       originSize.z * roadWidth * 7,
       originSize.y * roadWidth * 7
     );
-    console.log(originSize.y * roadWidth * 10);
+    // console.log(originSize.y * roadWidth * 10);
     this.lightHeight = originSize.y * roadWidth * 10;
     let l = tLight.clone();
 
@@ -105,7 +105,7 @@ export class CGTraffic {
         /*
          * Row
          */
-        // red 0.65, 
+        // red 0.65,
         lightRA.add(
           this.getSphere(-0.1, this.lightHeight - 0.65 - 3.6, 0.2, 0x808080)
         );
@@ -115,7 +115,7 @@ export class CGTraffic {
         );
         // green 2.95
         lightRA.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3, 0.2, 0x808080)
         );
         lightRA.position.set(
           blockX + blockWidth * 0.7,
@@ -134,7 +134,7 @@ export class CGTraffic {
         );
         // green
         lightRB.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3, 0.2, 0x808080)
         );
         var axis = new THREE.Vector3(0, 1, 0);
         lightRB.rotateOnAxis(axis, Math.PI);
@@ -163,7 +163,7 @@ export class CGTraffic {
         );
         // green
         lightCA.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3, 0.2, 0x808080)
         );
         var axis = new THREE.Vector3(0, 1, 0);
         lightCA.rotateOnAxis(axis, -Math.PI / 2);
@@ -184,7 +184,7 @@ export class CGTraffic {
         );
         // green
         lightCB.add(
-          this.getSphere(-0.1, this.lightHeight - 2.95 - 3., 0.2, 0x808080)
+          this.getSphere(-0.1, this.lightHeight - 2.95 - 3, 0.2, 0x808080)
         );
 
         lightCB.rotateOnAxis(axis, Math.PI / 2);

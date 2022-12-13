@@ -1,4 +1,4 @@
-import { map, first } from "rxjs";
+import { map, first, shareReplay } from "rxjs";
 import {
   getRandomElement,
   reCenterObj,
@@ -13,17 +13,26 @@ export class CGGroundGenerator {
     this.config = config;
     this.modelLoader = modelLoader;
     this.assetPath = assetPath;
+    this.cache = new Map();
   }
 
   generateRandomGround() {
-    return this.modelLoader
-      .load(this.assetPath.GROUND[getRandomElement(GROUND_OPTIONS)])
-      .pipe(map(this.preprocess), first());
+    const randomAsset = getRandomElement(GROUND_OPTIONS);
+    if (!this.cache.has(randomAsset)) {
+      this.cache.set(
+        randomAsset,
+        this.modelLoader.load(this.assetPath.GROUND[randomAsset]).pipe(
+          map(this.preprocess),
+          shareReplay(1),
+          map((obj) => obj.clone())
+        )
+      );
+    }
+    return this.cache.get(randomAsset);
   }
 
   preprocess = (obj) => {
     let object = obj;
-    console.log(obj.name);
     if (object.name == "Tree_1") {
       object = this.preprocessPark(object);
     } else if (object.name == "Parking_lot_block") {
@@ -50,14 +59,11 @@ export class CGGroundGenerator {
     const parkingLot = obj.clone();
     resizeObject(parkingLot, this.config.blockWidth, this.config.blockWidth, 5);
     reCenterObj(parkingLot);
-
-    console.log(parkingLot);
     return parkingLot;
   };
 
   preprocessChristmasTree = (obj) => {
     const christmasTree = obj.parent.clone();
-    console.log(obj);
     resizeObjectWithYAxisUp(
       christmasTree,
       this.config.blockWidth,
