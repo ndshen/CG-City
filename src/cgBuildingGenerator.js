@@ -4,6 +4,7 @@ import {
   getRandomElement,
   reCenterObj,
   resizeObject,
+  resizeObjectWithYAxisUp,
   setModelColor,
 } from "./util";
 
@@ -39,6 +40,7 @@ export class CGBuildingGenerator {
 
           this.resizeAndRecenter(
             building,
+            randomModelConfig,
             this.buildingComponentWidth,
             this.buildingComponentWidth,
             this.config.buildingLevelHeight
@@ -77,8 +79,12 @@ export class CGBuildingGenerator {
     );
   }
 
-  resizeAndRecenter(obj, width, length, height) {
-    resizeObject(obj, width, length, height);
+  resizeAndRecenter(obj, objConfig, width, length, height) {
+    if (objConfig.upAxis == "y") {
+      resizeObjectWithYAxisUp(obj, width, length, height);
+    } else {
+      resizeObject(obj, width, length, height);
+    }
     reCenterObj(obj);
   }
 
@@ -100,6 +106,7 @@ export class CGBuildingGenerator {
     // base
     this.resizeAndRecenter(
       base,
+      baseConfig,
       this.buildingComponentWidth,
       this.buildingComponentWidth,
       this.config.buildingLevelHeight
@@ -116,6 +123,7 @@ export class CGBuildingGenerator {
       const b = originBody.clone();
       this.resizeAndRecenter(
         b,
+        bodyConfig,
         this.buildingComponentWidth,
         this.buildingComponentWidth,
         this.config.buildingLevelHeight
@@ -135,6 +143,7 @@ export class CGBuildingGenerator {
     // roof
     this.resizeAndRecenter(
       roof,
+      roofConfig,
       this.buildingComponentWidth,
       this.buildingComponentWidth,
       this.config.buildingLevelHeight

@@ -8,7 +8,8 @@ export const gltfAssetPath = {
   ROAD: {
     STRAIGHT_ROAD: "roadAssets/straightroadPath/assets.gltf",
     CROSS_ROAD: "roadAssets/Fourway cross gltf/CG-City Assets.gltf",
-    TRAFFIC_LIGHT: "roadAssets/trafficLightNewNoLights/trafficLightNewNoLights.gltf"
+    TRAFFIC_LIGHT:
+      "roadAssets/trafficLightNewNoLights/trafficLightNewNoLights.gltf",
   },
   BUILDING: {
     ONE_LEVEL: [
@@ -62,13 +63,22 @@ export const gltfAssetPath = {
         },
       },
       {
-        path: "Building assets/3 building body gltf/3buildingbody.gltf",
+        path: "Building assets/3buildingBodyNewWindowNoRoof/3buildingBodyNewWindowNoRoof.gltf",
         setColor: function (obj, color) {
           const newMaterial = new THREE.MeshStandardMaterial();
           newMaterial.color = color;
-          obj.children[0].material = newMaterial;
+          obj.children[0].children[1].material = newMaterial;
         },
+        upAxis: "y",
       },
+      // {
+      //   path: "Building assets/3 building body gltf/3buildingbody.gltf",
+      //   setColor: function (obj, color) {
+      //     const newMaterial = new THREE.MeshStandardMaterial();
+      //     newMaterial.color = color;
+      //     obj.children[0].material = newMaterial;
+      //   },
+      // },
     ],
     ROOF: [
       {
