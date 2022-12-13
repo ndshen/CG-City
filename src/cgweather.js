@@ -71,7 +71,7 @@ export class CGWeather {
 
     // Textures
     const textureLoader = new THREE.TextureLoader();
-    const particleTexture = textureLoader.load("/textures/particles/1.png");
+    const particleTexture = textureLoader.load("textures/particles/1.png");
 
     // Material
     const particlesMaterial = new THREE.PointsMaterial();
@@ -140,7 +140,7 @@ export class CGWeather {
 
     // Textures
     const textureLoader = new THREE.TextureLoader();
-    const particleTexture = textureLoader.load("/textures/particles/14.png");
+    const particleTexture = textureLoader.load("textures/particles/14.png");
 
     // Material
     const particlesMaterial = new THREE.PointsMaterial();
