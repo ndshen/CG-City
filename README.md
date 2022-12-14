@@ -2,6 +2,15 @@
 
 Demo: https://ndshen.github.io/CG-City/
 
+Controls: 
+- 0: Clear weather
+- 1: Snow
+- 2: Rain
+- Z: Enter first person camera
+- Esc: Leave first person camera
+- WASD/Space: Control first person camera
+- Double click: Generate new city
+
 ## Setup
 
 Download [Node.js](https://nodejs.org/en/download/).
